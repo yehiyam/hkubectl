@@ -20,6 +20,9 @@
   },
   "homepage": "https://github.com/kube-HPC/hkubectl#readme",
   "dependencies": {
-    "commander": "^2.15.1"
+    "prettyjson": "^1.2.1",
+    "request": "^2.85.0",
+    "request-promise": "^4.2.2",
+    "yargs": "^11.0.0"
   }
 }

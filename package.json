@@ -1,5 +1,5 @@
 {
-  "name": "hkubectl",
+  "name": "@hkube/hkubectl",
   "version": "1.1.0",
   "description": "",
   "main": "hkubectl.js",
@@ -7,7 +7,9 @@
     "hkubectl": "./hkubectl.js"
   },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "mocha test --colors --recursive",
+    "test-travis": "./node_modules/istanbul/lib/cli.js cover ./node_modules/mocha/bin/_mocha -- -R spec test",
+    "build": "npm publish"
   },
   "repository": {
     "type": "git",

@@ -20,6 +20,8 @@
   },
   "homepage": "https://github.com/kube-HPC/hkubectl#readme",
   "dependencies": {
+    "find-up": "^2.1.0",
+    "lodash.merge": "^4.6.1",
     "prettyjson": "^1.2.1",
     "request": "^2.85.0",
     "request-promise": "^4.2.2",

@@ -1,12 +1,12 @@
-const request = require('request-promise');
+const { get } = require('../../helpers/request-helper');
 const path = require('path');
 const prettyjson = require('prettyjson');
 
-const list = async ({endpoint}) => {
-    const uri = endpoint+'/api/v1/store/algorithms'
-    return request({
-        uri,
-        rejectUnauthorized:false
+const list = async (argv) => {
+    const path = './api/v1/store/algorithms';
+    return get({
+        ...argv,
+        path
     });
 }
 
@@ -20,8 +20,7 @@ module.exports = {
     },
     builder: {},
     handler: async (argv) => {
-        console.log(`list command called with ${JSON.stringify(argv)}`);
         const ret = await list(argv);
-        console.log(prettyjson.renderString(ret));
+        console.log(prettyjson.render(ret, { inlineArrays: true }));
     }
 }

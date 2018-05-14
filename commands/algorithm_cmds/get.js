@@ -3,7 +3,7 @@ const path = require('path');
 const prettyjson = require('prettyjson');
 
 const getHandler = async ({endpoint,rejectUnauthorized,name}) => {
-    const path=`./api/v1/store/algorithms/${name}`
+    const path=`./api/v1/store/algorithms/${name?name:""}`
     return get({
         endpoint,
         rejectUnauthorized,
@@ -14,7 +14,7 @@ const getHandler = async ({endpoint,rejectUnauthorized,name}) => {
 
 
 module.exports = {
-    command: 'get <name>',
+    command: 'get [name]',
     description: 'Gets an algorithm by name',
     options: {
 

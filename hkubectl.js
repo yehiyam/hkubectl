@@ -5,6 +5,7 @@ const { algorithm } = require('./commands/algorithm');
 
 const main = async () => {
   const config = readConfig();
+
   yargs.config(config);
   yargs.command(algorithm)
     .demandCommand()
@@ -20,7 +21,9 @@ const main = async () => {
       default: "true"
     })
     .epilog('for more information visit http://hkube.io')
-    .argv
+    .completion()
+    .argv;
+
 }
 
 main();

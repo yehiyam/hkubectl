@@ -10,8 +10,6 @@ const uriBuilder = ({ endpoint, path, qs = {} }) => {
 }
 
 const del = async ({ endpoint, rejectUnauthorized, path, qs }) => {
-
-    console.log(`connecting to ${endpoint}`);
     const uri = uriBuilder({ endpoint, path, qs });
     try {
         return await request({
@@ -27,8 +25,6 @@ const del = async ({ endpoint, rejectUnauthorized, path, qs }) => {
 };
 
 const get = async ({ endpoint, rejectUnauthorized, path, qs }) => {
-
-    console.log(`connecting to ${endpoint}`);
     const uri = uriBuilder({ endpoint, path, qs });
     try {
         return await request({
@@ -44,7 +40,6 @@ const get = async ({ endpoint, rejectUnauthorized, path, qs }) => {
 };
 
 const post = async ({ endpoint, rejectUnauthorized, path, qs, body }) => {
-    console.log(`connecting to ${endpoint}`);
     const uri = uriBuilder({ endpoint, path, qs });
     try {
         return await request({
@@ -60,7 +55,6 @@ const post = async ({ endpoint, rejectUnauthorized, path, qs, body }) => {
     }
 }
 const put = async ({ endpoint, rejectUnauthorized, path, qs, body }) => {
-    console.log(`connecting to ${endpoint}`);
     const uri = uriBuilder({ endpoint, path, qs });
     try {
         return await request({

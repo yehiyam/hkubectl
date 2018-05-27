@@ -1,7 +1,7 @@
 const prettyjson = require('prettyjson');
 const { post } = require('../../helpers/request-helper');
 
-const handleAdd = async ({ endpoint, rejectUnauthorized, name, image, cpu, mem=0 }) => {
+const handleAdd = async ({ endpoint, rejectUnauthorized, name, image, cpu, mem = 0 }) => {
     const path = './api/v1/store/algorithms';
     const body = {
         name,
@@ -33,9 +33,14 @@ module.exports = {
             demandOption: true,
             describe: 'CPU requirements of the algorithm in milli-cores',
             type: 'number'
+        },
+        'mem': {
+            demandOption: false,
+            describe: 'memory requirements of the algorithm in bytes',
+            type: 'number'
         }
     },
-    handler:async (argv) => {
+    handler: async (argv) => {
         const ret = await handleAdd(argv);
         console.log(prettyjson.render(ret));
     }

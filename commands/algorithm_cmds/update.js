@@ -41,7 +41,7 @@ module.exports = {
         },
         'mem': {
             describe: 'memory requirements of the algorithm in bytes',
-            type: 'number'
+            type: 'string'
         }
     },
     handler:async (argv) => {

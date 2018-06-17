@@ -1,13 +1,15 @@
 const prettyjson = require('prettyjson');
 const { post } = require('../../helpers/request-helper');
 
-const handleAdd = async ({ endpoint, rejectUnauthorized, name, image, cpu, mem = 0 }) => {
+const handleAdd = async ({ endpoint, rejectUnauthorized, name, image, cpu, mem , workerEnv, algorithmEnv  }) => {
     const path = './api/v1/store/algorithms';
     const body = {
         name,
         algorithmImage: image,
         cpu,
-        mem
+        mem,
+        workerEnv,
+        algorithmEnv
     }
     return post({
         endpoint,
@@ -31,13 +33,21 @@ module.exports = {
         },
         'cpu': {
             demandOption: true,
-            describe: 'CPU requirements of the algorithm in milli-cores',
+            describe: 'CPU requirements of the algorithm in cores',
             type: 'number'
         },
         'mem': {
             demandOption: false,
-            describe: 'memory requirements of the algorithm in bytes',
-            type: 'number'
+            describe: "memory requirements of the algorithm. Possibel units are ['Ki', 'M', 'Mi', 'Gi', 'm', 'K', 'G', 'T', 'Ti', 'P', 'Pi', 'E', 'Ei']. Minimum is 4Mi",
+            type: 'string'
+        },
+        'workerEnv': {
+            describe: 'key-value of environment variables for the worker containers. You can specify more than one. example: --workerEnv.foo=bar --workerEnv.baz=bar',
+            type: 'object'
+        },
+        'algorithmEnv': {
+            describe: 'key-value of environment variables for the algorithm containers. You can specify more than one. example: --algorithmEnv.foo=bar --algorithmEnv.baz=bar',
+            type: 'object'
         }
     },
     handler: async (argv) => {

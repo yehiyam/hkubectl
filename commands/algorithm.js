@@ -6,6 +6,16 @@ const algorithm = {
         Object.values(commands).forEach((cmd)=>{
             yargs.command(cmd)
         });
+        yargs.options('endpoint', {
+            description: 'url of hkube api endpoint',
+            required: true,
+            type: "string"
+          })
+          .options('rejectUnauthorized', {
+            description: 'set to false to ignore certificate signing errors. Useful for self signed TLS certificate',
+            type: "boolean",
+            default: "true"
+          })
         return yargs;
     },
     handler: ()=>{}

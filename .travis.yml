@@ -25,11 +25,17 @@ after_success:
 - git checkout -f -b version-branch
 - npm version patch -m "$(git log -1 --pretty=%B) .... bump version [skip ci]"
 - git push origin version-branch:master --follow-tags
+- npx pkg --targets=linux .
 - snyk monitor
+# deploy:
+#   skip_cleanup: true
+#   provider: npm
+#   email: yehiyam@gmail.com
+#   api_key: "$NPM_AUTH_TOKEN"
+#   on:
+#     branch: master
 deploy:
+  provider: releases
+  api_key: "$GH_TOKEN"
+  file: "./hkubectl"
   skip_cleanup: true
-  provider: npm
-  email: yehiyam@gmail.com
-  api_key: "$NPM_AUTH_TOKEN"
-  on:
-    branch: master

@@ -35,7 +35,14 @@ after_success:
 #   on:
 #     branch: master
 deploy:
-  provider: releases
-  api_key: "$GH_TOKEN"
-  file: "./hkubectl"
-  skip_cleanup: true
+  - provider: releases
+    api_key: "$GH_TOKEN"
+    file: "./hkubectl"
+    skip_cleanup: true
+  - provider: npm
+    skip_cleanup: true
+    email: yehiyam@gmail.com
+    api_key: "$NPM_AUTH_TOKEN"
+    on:
+      branch: master
+

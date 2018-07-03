@@ -2,7 +2,7 @@ const prettyjson = require('prettyjson');
 const { put, get } = require('../../helpers/request-helper');
 const merge = require('lodash.merge');
 const handleUpdate = async ({ endpoint, rejectUnauthorized, name, image, cpu, mem, workerEnv, algorithmEnv }) => {
-    const path = './api/v1/store/algorithms';
+    const path = 'api/v1/store/algorithms';
     const retResponse = await get({
         endpoint,
         rejectUnauthorized,

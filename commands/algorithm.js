@@ -15,7 +15,7 @@ const algorithm = {
             description: 'set to false to ignore certificate signing errors. Useful for self signed TLS certificate',
             type: "boolean",
             default: "true"
-          })
+          }).strict()
         return yargs;
     },
     handler: ()=>{}

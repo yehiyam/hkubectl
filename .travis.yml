@@ -26,6 +26,7 @@ after_success:
 - npm version patch -m "$(git log -1 --pretty=%B) .... bump version [skip ci]"
 - git push origin version-branch:master --follow-tags
 - npx pkg --targets=linux .
+- tar cfvz hkubectl.tgz hkubectl
 - snyk monitor
 # deploy:
 #   skip_cleanup: true
@@ -37,7 +38,7 @@ after_success:
 deploy:
   - provider: releases
     api_key: "$GH_TOKEN"
-    file: "./hkubectl"
+    file: "./hkubectl.tgz"
     skip_cleanup: true
   - provider: npm
     skip_cleanup: true

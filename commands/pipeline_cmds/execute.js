@@ -6,13 +6,13 @@ const fs = require('fs');
 
 const executeHandler = async ({ endpoint, rejectUnauthorized, name = "", type = "stored", file = "" }) => {
     const path = `api/v1/exec/${type}/`;
-    let buffer = "";
+    let buffer = "{}";
 
     if (file != "") {
-        buffer = fs.readFileSync(file);
+        buffer = fs.readFileSync(file).toString();
     }
     const body = {
-        name, ...JSON.parse(buffer.toString())
+        name, ...JSON.parse(buffer)
     }
     console.log(body);
     return post({
@@ -22,8 +22,6 @@ const executeHandler = async ({ endpoint, rejectUnauthorized, name = "", type = 
         body
     });
 }
-
-
 
 module.exports = {
     command: 'execute <name>',

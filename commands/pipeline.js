@@ -9,7 +9,7 @@ const pipeline = {
         yargs.options('endpoint', {
             description: 'url of hkube api endpoint',
             type: "string",
-            default: 'https://10.32.10.11/hkube/api-server/'
+            default: 'http://127.0.0.1/hkube/api-server/'
           })
           .options('rejectUnauthorized', {
             description: 'set to false to ignore certificate signing errors. Useful for self signed TLS certificate',

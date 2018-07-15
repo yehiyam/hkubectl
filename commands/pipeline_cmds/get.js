@@ -19,11 +19,7 @@ module.exports = {
     options: {
 
     },
-    builder: (yargs)=>{
-        yargs.command(xxx);
-        yargs.command(yyy);
-        
-    },
+    builder: {},
     handler: async (argv) => {
         const ret = await getHandler(argv);
         console.log(prettyjson.render(ret));

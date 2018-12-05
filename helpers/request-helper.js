@@ -1,6 +1,6 @@
 const request = require('request-promise');
 const { URL } = require('url');
-const {getError} = require('./error-helper');
+const { getError } = require('./error-helper');
 const uriBuilder = ({ endpoint, path, qs = {} }) => {
     const url = new URL(path, endpoint);
     Object.entries(qs).forEach(([k, v]) => {
@@ -54,6 +54,22 @@ const post = async ({ endpoint, rejectUnauthorized, path, qs, body }) => {
         return getError(error);
     }
 }
+
+const postFile = async ({ endpoint, rejectUnauthorized, path, qs, formData }) => {
+    const uri = uriBuilder({ endpoint, path, qs });
+    try {
+        return await request({
+            method: 'POST',
+            uri,
+            rejectUnauthorized,
+            formData
+        });
+    }
+    catch (error) {
+        return getError(error);
+    }
+}
+
 const put = async ({ endpoint, rejectUnauthorized, path, qs, body }) => {
     const uri = uriBuilder({ endpoint, path, qs });
     try {
@@ -73,6 +89,7 @@ const put = async ({ endpoint, rejectUnauthorized, path, qs, body }) => {
 module.exports = {
     get,
     post,
+    postFile,
     put,
     del
 }

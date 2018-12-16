@@ -1,5 +1,4 @@
 const { get } = require('../../helpers/request-helper');
-const path = require('path');
 const prettyjson = require('prettyjson');
 
 const list = async (argv) => {
@@ -9,8 +8,6 @@ const list = async (argv) => {
         path
     });
 }
-
-
 
 module.exports = {
     command: 'list',

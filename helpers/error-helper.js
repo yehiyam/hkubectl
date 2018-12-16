@@ -1,11 +1,11 @@
 const getError = (error) => {
-    if (error.message){
-        return error.message;
+    if (error.message) {
+        return { message: error.message, code: error.code };
     }
-    if (error.error){
+    if (error.error) {
         return getError(error.error);
     }
-    return "Generic Error";
+    return { message: "Generic Error" };
 }
 
 module.exports = {

@@ -11,16 +11,12 @@
             ],
             "args": [
                 "algorithm",
-                "create",
-                "code-less",
+                "apply",
+                "green-alg",
+                "--f",
+                "/home/harelh/dev/hkube/metadata.yml",
                 "--env",
-                "nodejs",
-                "--code",
-                "/home/harelh/dev/hkube/algorithm-node-codeless",
-                "--mem",
-                "512",
-                "--cpu",
-                "0.5"
+                "python"
             ]
         }
     ]

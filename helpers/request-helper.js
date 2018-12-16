@@ -1,6 +1,7 @@
 const request = require('request-promise');
 const { URL } = require('url');
 const { getError } = require('./error-helper');
+
 const uriBuilder = ({ endpoint, path, qs = {} }) => {
     const url = new URL(path, endpoint);
     Object.entries(qs).forEach(([k, v]) => {
@@ -26,17 +27,19 @@ const del = async ({ endpoint, rejectUnauthorized, path, qs }) => {
 
 const get = async ({ endpoint, rejectUnauthorized, path, qs }) => {
     const uri = uriBuilder({ endpoint, path, qs });
+    let result, error;
     try {
-        return await request({
+        result = await request({
             method: 'GET',
             uri,
             rejectUnauthorized,
             json: true
         });
     }
-    catch (error) {
-        return getError(error);
+    catch (e) {
+        error = getError(e.error);
     }
+    return { error, result };
 };
 
 const post = async ({ endpoint, rejectUnauthorized, path, qs, body }) => {

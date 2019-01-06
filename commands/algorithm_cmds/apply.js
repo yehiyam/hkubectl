@@ -1,70 +1,77 @@
+const os = require('os');
+const path = require('path');
 const fse = require('fs-extra');
 const yaml = require('js-yaml');
-const path = require('path');
-const Zip = require('adm-zip');
-const uuid = require('uuid/v4');
 const { diff } = require('deep-diff');
 const merge = require('lodash.merge');
 const md5 = require('md5');
 const prettyjson = require('prettyjson');
 const { get, postFile } = require('../../helpers/request-helper');
-const hkubePath = path.join(process.env.HOME, '/.hkube')
-
-const CODE_UPDATE = [
-    'checksum',
-    'env'
-];
 
 const handleAdd = async ({ endpoint, rejectUnauthorized, file, name, ...cliContent }) => {
     const applyPath = 'api/v1/apply/algorithms';
     const storePath = 'api/v1/store/algorithms';
 
-    let stream, zipFile, checksum, result, error;
+    let result, error;
     try {
+        let stream, checksum, fileExt, fileSize;
         const fileContent = readFile(file);
+        if (fileContent.error) {
+            throw new Error(fileContent.error);
+        }
         const fileData = adaptFileData(fileContent.result);
         const cliData = adaptCliData(cliContent);
-        const options = merge({}, fileData, cliData);
+        const algorithm = merge({}, fileData, cliData);
 
-        const algorithm = await get({
+        const alg = await get({
             endpoint,
             rejectUnauthorized,
             path: `${storePath}/${name}`
         });
 
-        if (algorithm.error && algorithm.error.code === 'ECONNREFUSED') {
+        if (alg.error && alg.error.code === 'ECONNREFUSED') {
             throw new Error(`unable to connect to ${endpoint}`);
         }
 
-        if (options.code && options.code.path) {
-            // const zip = new Zip();
-            // zipFile = `${hkubePath}/${name}-${uuid()}.zip`;
-            // zip.addLocalFolder(code.path);
-            // zip.writeZip(zipFile);
-            const buffer = fse.readFileSync(options.code.path);
+        if (algorithm.code.path) {
+            const codePath = algorithm.code.path;
+            const buffer = fse.readFileSync(codePath);
             checksum = md5(buffer);
+            fileExt = path.extname(codePath);
+            fileSize = fse.statSync(codePath).size;
         }
 
         const body = {
             name,
-            env: options.env,
-            cpu: options.cpu,
-            mem: options.mem,
-            checksum,
-            codeEntryPoint: options.codeEntryPoint,
-            algorithmImage: options.image,
-            algorithmEnv: options.algorithmEnv,
-            workerEnv: options.workerEnv
+            env: algorithm.env,
+            cpu: algorithm.cpu,
+            mem: algorithm.mem,
+            code: {
+                checksum,
+                fileExt,
+                fileSize,
+                entryPoint: algorithm.code.entryPoint
+            },
+            userInfo: {
+                platform: os.platform(),
+                hostname: os.hostname(),
+                username: os.userInfo().username
+            },
+            minHotWorkers: algorithm.minHotWorkers,
+            nodeAffinity: algorithm.nodeAffinity,
+            algorithmImage: algorithm.image,
+            algorithmEnv: algorithm.algorithmEnv,
+            workerEnv: algorithm.workerEnv
         };
 
-        const shouldPost = shouldPostFile(algorithm.result, body);
-        if (shouldPost) {
-            stream = fse.createReadStream(options.codePath);
+        const shouldPost = shouldPostFile(alg.result, body);
+        if (shouldPost && algorithm.code.path) {
+            stream = fse.createReadStream(algorithm.code.path);
         }
 
         const formData = {
             payload: JSON.stringify(body),
-            code: stream || ''
+            zip: stream || ''
         };
         result = await postFile({
             endpoint,
@@ -75,11 +82,6 @@ const handleAdd = async ({ endpoint, rejectUnauthorized, file, name, ...cliConte
     }
     catch (e) {
         error = e.message;
-    }
-    finally {
-        // if (zipFile) {
-        //     fse.removeSync(zipFile);
-        // }
     }
     return { error, result };
 };
@@ -95,31 +97,37 @@ const readFile = (file) => {
         error = e.message;
     }
     return { error, result };
-}
+};
 
 const adaptFileData = (fileData) => {
-    const { name, env, code, resources, image, algorithmEnv, workerEnv } = fileData || {};
+    const { name, env, code, resources, image, algorithmEnv, workerEnv, minHotWorkers, nodeAffinity } = fileData || {};
     const { cpu, mem } = resources || {};
-    const { path, entryPoint } = code || {};
-    return { name, env, image, cpu, mem, algorithmEnv, workerEnv, codePath: path, codeEntryPoint: entryPoint };
-}
+    return { name, env, code: code || {}, algorithmImage: image, cpu, mem, algorithmEnv, workerEnv, minHotWorkers, nodeAffinity };
+};
 
 const adaptCliData = (cliData) => {
     const { env, image, cpu, mem, algorithmEnv, workerEnv, codePath, codeEntryPoint } = cliData || {};
-    return { env, image, cpu, mem, algorithmEnv, workerEnv, codePath, codeEntryPoint };
-}
+    return { env, algorithmImage: image, cpu, mem, algorithmEnv, workerEnv, code: { path: codePath, entryPoint: codeEntryPoint } };
+};
+
+const CODE_UPDATE = [
+    'checksum',
+    'env'
+];
 
 const shouldPostFile = (algorithmOld, algorithmNew) => {
     let shouldPostFile = false;
-    const differences = diff(algorithmOld, algorithmNew);
-    differences.forEach((d) => {
-        const field = d.path.join('.');
-        if (CODE_UPDATE.includes(field)) {
-            shouldPostFile = true;
+    if (!algorithmOld) {
+        shouldPostFile = true;
+    }
+    else {
+        const differences = diff(algorithmOld, algorithmNew);
+        if (differences) {
+            shouldPostFile = differences.some(d => CODE_UPDATE.includes(d.path.join('.')));
         }
-    });
+    }
     return shouldPostFile;
-}
+};
 
 module.exports = {
     command: 'apply <name>',

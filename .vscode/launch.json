@@ -12,11 +12,11 @@
             "args": [
                 "algorithm",
                 "apply",
-                "green-alg",
+                "sort-alg",
                 "--f",
                 "/home/harelh/dev/hkube/metadata.yml",
-                "--env",
-                "python"
+                "--cpu",
+                "0.5"
             ]
         }
     ]

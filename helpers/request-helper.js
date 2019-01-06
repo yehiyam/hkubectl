@@ -60,17 +60,20 @@ const post = async ({ endpoint, rejectUnauthorized, path, qs, body }) => {
 
 const postFile = async ({ endpoint, rejectUnauthorized, path, qs, formData }) => {
     const uri = uriBuilder({ endpoint, path, qs });
+    let result, error;
     try {
         return await request({
             method: 'POST',
+            json: true,
             uri,
             rejectUnauthorized,
             formData
         });
     }
-    catch (error) {
-        return getError(error);
+    catch (e) {
+        error = getError(e.error);
     }
+    return { error, result };
 }
 
 const put = async ({ endpoint, rejectUnauthorized, path, qs, body }) => {

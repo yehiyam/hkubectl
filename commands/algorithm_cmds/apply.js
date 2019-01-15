@@ -8,7 +8,7 @@ const md5 = require('md5');
 const prettyjson = require('prettyjson');
 const { get, postFile } = require('../../helpers/request-helper');
 
-const handleAdd = async ({ endpoint, rejectUnauthorized, file, name, ...cliContent }) => {
+const handleAdd = async ({ endpoint, rejectUnauthorized, file, ...cli }) => {
     const applyPath = 'api/v1/apply/algorithms';
     const storePath = 'api/v1/store/algorithms';
 
@@ -20,13 +20,13 @@ const handleAdd = async ({ endpoint, rejectUnauthorized, file, name, ...cliConte
             throw new Error(fileContent.error);
         }
         const fileData = adaptFileData(fileContent.result);
-        const cliData = adaptCliData(cliContent);
+        const cliData = adaptCliData(cli);
         const algorithm = merge({}, fileData, cliData);
 
         const alg = await get({
             endpoint,
             rejectUnauthorized,
-            path: `${storePath}/${name}`
+            path: `${storePath}/${algorithm.name}`
         });
 
         if (alg.error && alg.error.code === 'ECONNREFUSED') {
@@ -42,10 +42,7 @@ const handleAdd = async ({ endpoint, rejectUnauthorized, file, name, ...cliConte
         }
 
         const body = {
-            name,
-            env: algorithm.env,
-            cpu: algorithm.cpu,
-            mem: algorithm.mem,
+            ...algorithm,
             code: {
                 checksum,
                 fileExt,
@@ -56,12 +53,7 @@ const handleAdd = async ({ endpoint, rejectUnauthorized, file, name, ...cliConte
                 platform: os.platform(),
                 hostname: os.hostname(),
                 username: os.userInfo().username
-            },
-            minHotWorkers: algorithm.minHotWorkers,
-            nodeAffinity: algorithm.nodeAffinity,
-            algorithmImage: algorithm.image,
-            algorithmEnv: algorithm.algorithmEnv,
-            workerEnv: algorithm.workerEnv
+            }
         };
 
         const shouldPost = shouldPostFile(alg.result, body);
@@ -100,9 +92,9 @@ const readFile = (file) => {
 };
 
 const adaptFileData = (fileData) => {
-    const { name, env, code, resources, image, algorithmEnv, workerEnv, minHotWorkers, nodeAffinity } = fileData || {};
+    const { name, env, code, resources, image, algorithmEnv, workerEnv, minHotWorkers, nodeSelector } = fileData || {};
     const { cpu, mem } = resources || {};
-    return { name, env, code: code || {}, algorithmImage: image, cpu, mem, algorithmEnv, workerEnv, minHotWorkers, nodeAffinity };
+    return { name, env, code: code || {}, algorithmImage: image, cpu, mem, algorithmEnv, workerEnv, minHotWorkers, nodeSelector };
 };
 
 const adaptCliData = (cliData) => {
@@ -130,7 +122,7 @@ const shouldPostFile = (algorithmOld, algorithmNew) => {
 };
 
 module.exports = {
-    command: 'apply <name>',
+    command: 'apply',
     description: 'apply an algorithm',
     options: {
     },

@@ -12,7 +12,6 @@
             "args": [
                 "algorithm",
                 "apply",
-                "sort-alg",
                 "--f",
                 "/home/harelh/dev/hkube/metadata.yml",
                 "--cpu",

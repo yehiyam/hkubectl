@@ -1,5 +1,4 @@
 const os = require('os');
-const path = require('path');
 const fse = require('fs-extra');
 const yaml = require('js-yaml');
 const { diff } = require('deep-diff');
@@ -14,7 +13,7 @@ const handleAdd = async ({ endpoint, rejectUnauthorized, file, ...cli }) => {
 
     let result, error;
     try {
-        let stream, checksum, fileExt, fileSize;
+        let stream, checksum, fileSize;
         const fileContent = readFile(file);
         if (fileContent.error) {
             throw new Error(fileContent.error);
@@ -37,7 +36,6 @@ const handleAdd = async ({ endpoint, rejectUnauthorized, file, ...cli }) => {
             const codePath = algorithm.code.path;
             const buffer = fse.readFileSync(codePath);
             checksum = md5(buffer);
-            fileExt = path.extname(codePath);
             fileSize = fse.statSync(codePath).size;
         }
 
@@ -45,7 +43,6 @@ const handleAdd = async ({ endpoint, rejectUnauthorized, file, ...cli }) => {
             ...algorithm,
             code: {
                 checksum,
-                fileExt,
                 fileSize,
                 entryPoint: algorithm.code.entryPoint
             },
@@ -56,7 +53,7 @@ const handleAdd = async ({ endpoint, rejectUnauthorized, file, ...cli }) => {
             }
         };
 
-        const shouldPost = shouldPostFile(alg.result, body);
+        const shouldPost = true; // shouldPostFile(alg.result, body);
         if (shouldPost && algorithm.code.path) {
             stream = fse.createReadStream(algorithm.code.path);
         }
@@ -81,9 +78,7 @@ const handleAdd = async ({ endpoint, rejectUnauthorized, file, ...cli }) => {
 const readFile = (file) => {
     let result, error;
     try {
-        if (fse.existsSync(file)) {
-            result = yaml.safeLoad(fse.readFileSync(file, 'utf8'));
-        }
+        result = yaml.safeLoad(fse.readFileSync(file, 'utf8'));
     }
     catch (e) {
         error = e.message;
@@ -103,7 +98,7 @@ const adaptCliData = (cliData) => {
 };
 
 const CODE_UPDATE = [
-    'checksum',
+    'code.checksum',
     'env'
 ];
 

@@ -6,21 +6,23 @@ const merge = require('lodash.merge');
 const md5 = require('md5');
 const prettyjson = require('prettyjson');
 const { get, postFile } = require('../../helpers/request-helper');
+const applyPath = 'api/v1/store/algorithms/apply';
+const storePath = 'api/v1/store/algorithms';
 
 const handleAdd = async ({ endpoint, rejectUnauthorized, file, ...cli }) => {
-    const applyPath = 'api/v1/apply/algorithms';
-    const storePath = 'api/v1/store/algorithms';
 
     let result, error;
     try {
-        let stream, checksum, fileSize;
+        let stream, checksum;
         const fileContent = readFile(file);
         if (fileContent.error) {
             throw new Error(fileContent.error);
         }
         const fileData = adaptFileData(fileContent.result);
         const cliData = adaptCliData(cli);
-        const algorithm = merge({}, fileData, cliData);
+        const algorithmData = merge(fileData, cliData);
+
+        const { code, ...algorithm } = algorithmData;
 
         const alg = await get({
             endpoint,
@@ -32,19 +34,17 @@ const handleAdd = async ({ endpoint, rejectUnauthorized, file, ...cli }) => {
             throw new Error(`unable to connect to ${endpoint}`);
         }
 
-        if (algorithm.code.path) {
-            const codePath = algorithm.code.path;
+        if (code.path) {
+            const codePath = code.path;
             const buffer = fse.readFileSync(codePath);
             checksum = md5(buffer);
-            fileSize = fse.statSync(codePath).size;
         }
 
         const body = {
             ...algorithm,
-            code: {
-                checksum,
-                fileSize,
-                entryPoint: algorithm.code.entryPoint
+            entryPoint: code.entryPoint,
+            fileInfo: {
+                checksum
             },
             userInfo: {
                 platform: os.platform(),
@@ -53,14 +53,14 @@ const handleAdd = async ({ endpoint, rejectUnauthorized, file, ...cli }) => {
             }
         };
 
-        const shouldPost = true; // shouldPostFile(alg.result, body);
-        if (shouldPost && algorithm.code.path) {
-            stream = fse.createReadStream(algorithm.code.path);
+        const shouldPost = shouldPostFile(alg.result, body);
+        if (shouldPost && code.path) {
+            stream = fse.createReadStream(code.path);
         }
 
         const formData = {
             payload: JSON.stringify(body),
-            zip: stream || ''
+            file: stream || ''
         };
         result = await postFile({
             endpoint,
@@ -87,14 +87,14 @@ const readFile = (file) => {
 };
 
 const adaptFileData = (fileData) => {
-    const { name, env, code, resources, image, algorithmEnv, workerEnv, minHotWorkers, nodeSelector } = fileData || {};
-    const { cpu, mem } = resources || {};
-    return { name, env, code: code || {}, algorithmImage: image, cpu, mem, algorithmEnv, workerEnv, minHotWorkers, nodeSelector };
+    const { name, env, image, version, code, resources, algorithmEnv, workerEnv, minHotWorkers, nodeSelector } = fileData || {};
+    const { cpu, gpu, mem } = resources || {};
+    return { name, env, code: code || {}, version, algorithmImage: image, cpu, gpu, mem, algorithmEnv, workerEnv, minHotWorkers, nodeSelector };
 };
 
 const adaptCliData = (cliData) => {
-    const { env, image, cpu, mem, algorithmEnv, workerEnv, codePath, codeEntryPoint } = cliData || {};
-    return { env, algorithmImage: image, cpu, mem, algorithmEnv, workerEnv, code: { path: codePath, entryPoint: codeEntryPoint } };
+    const { env, image, ver, cpu, gpu, mem, algorithmEnv, workerEnv, codePath, codeEntryPoint } = cliData || {};
+    return { env, algorithmImage: image, version: ver, cpu, gpu, mem, algorithmEnv, workerEnv, code: { path: codePath, entryPoint: codeEntryPoint } };
 };
 
 const CODE_UPDATE = [
@@ -138,39 +138,57 @@ module.exports = {
             type: 'string',
             alias: ['i']
         },
+        'version': {
+            describe: 'the version for docker image',
+            type: 'string',
+            alias: ['version']
+        },
         'codePath': {
             describe: 'the code path for the algorithm',
             type: 'string',
-            alias: ['cp']
+            alias: ['codePath']
         },
         'codeEntryPoint': {
             describe: 'the code entry point for the algorithm',
             type: 'string',
-            alias: ['ce']
+            alias: ['codeEntryPoint']
         },
         'cpu': {
             describe: 'CPU requirements of the algorithm in cores',
             type: 'number',
-            alias: ['c']
+            alias: ['cpu']
+        },
+        'gpu': {
+            describe: 'GPU requirements of the algorithm in cores',
+            type: 'number',
+            alias: ['gpu']
         },
         'mem': {
             describe: "memory requirements of the algorithm. Possible units are ['Ki', 'M', 'Mi', 'Gi', 'm', 'K', 'G', 'T', 'Ti', 'P', 'Pi', 'E', 'Ei']. Minimum is 4Mi",
             type: 'string',
-            alias: ['m']
+            alias: ['mem']
         },
         'workerEnv': {
             describe: 'key-value of environment variables for the worker containers. You can specify more than one. example: --workerEnv.foo=bar --workerEnv.baz=bar',
             type: 'object',
-            alias: ['we']
+            alias: ['workerEnv']
         },
         'algorithmEnv': {
             describe: 'key-value of environment variables for the algorithm containers. You can specify more than one. example: --algorithmEnv.foo=bar --algorithmEnv.baz=bar',
             type: 'object',
-            alias: ['ae']
+            alias: ['algorithmEnv']
         }
     },
     handler: async (argv) => {
         const ret = await handleAdd(argv);
+        if (ret.result && !ret.result.error) {
+            let message = `\n The algorithm ${ret.result.algorithm.name} has been successfully pushed to hkube. \n`;
+            if (ret.result.buildId) {
+                message += `a build was triggered, follow this link to see the build status: \n`
+                message += `${argv.endpoint}api/v1/builds/status/${ret.result.buildId} \n`
+            }
+            console.log(message);
+        }
         console.log(prettyjson.render(ret));
     }
 }

@@ -13,9 +13,7 @@
                 "algorithm",
                 "apply",
                 "--f",
-                "/home/harelh/dev/hkube/metadata.yml",
-                "--cpu",
-                "0.5"
+                "/home/harelh/dev/hkube/metadata.yml"
             ]
         }
     ]

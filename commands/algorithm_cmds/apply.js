@@ -181,14 +181,6 @@ module.exports = {
     },
     handler: async (argv) => {
         const ret = await handleAdd(argv);
-        if (ret.result && !ret.result.error) {
-            let message = `\n The algorithm ${ret.result.algorithm.name} has been successfully pushed to hkube. \n`;
-            if (ret.result.buildId) {
-                message += `a build was triggered, follow this link to see the build status: \n`
-                message += `${argv.endpoint}api/v1/builds/status/${ret.result.buildId} \n`
-            }
-            console.log(message);
-        }
         console.log(prettyjson.render(ret));
     }
 }

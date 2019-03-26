@@ -1,7 +1,28 @@
 const prettyjson = require('prettyjson');
-const { put, get } = require('../../helpers/request-helper');
+const { put, get,putFile } = require('../../helpers/request-helper');
 const merge = require('lodash.merge');
-const handleUpdate = async ({ endpoint, rejectUnauthorized, name, image, cpu, mem, workerEnv, algorithmEnv }) => {
+const fse = require("fs-extra");
+
+const readmeUpdate = async (readmeFile, endpoint, rejectUnauthorized, name) => {
+    const path = `api/v1/readme/algorithms/${name}`;
+    let stream = fse.createReadStream(readmeFile);
+    const formData = {
+      "README.md": {
+        value: stream,
+        options: {
+          filename: "README.md"
+        }
+      }
+    };
+    const result = await putFile({
+      endpoint,
+      rejectUnauthorized,
+      formData,
+      path
+    });
+  };
+
+const handleUpdate = async ({ endpoint, rejectUnauthorized, name, image, cpu, mem, workerEnv, algorithmEnv,readmeFile }) => {
     const path = 'api/v1/store/algorithms';
     const retResponse = await get({
         endpoint,
@@ -12,6 +33,9 @@ const handleUpdate = async ({ endpoint, rejectUnauthorized, name, image, cpu, me
         retResponse.mem = `${retResponse.mem}Mi`
     }
     const body = merge({ ...retResponse }, { name }, { algorithmImage: image }, { cpu }, { mem }, { workerEnv }, { algorithmEnv });
+    if (readmeFile){
+        await readmeUpdate(readmeFile,endpoint,rejectUnauthorized,name)
+    }
     return put({
         endpoint,
         rejectUnauthorized,
@@ -46,7 +70,11 @@ module.exports = {
         'algorithmEnv': {
             describe: 'key-value of environment variables for the algorithm containers. You can specify more than one. example: --algorithmEnv.foo=bar --algorithmEnv.baz=bar',
             type: 'object'
-        }
+        },
+        'readmeFile': {
+            describe: 'path for readme file. example: --readmeFile="./readme.md',
+            type: "string"
+          }
     },
     handler: async (argv) => {
         const ret = await handleUpdate(argv);

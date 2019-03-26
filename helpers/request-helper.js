@@ -92,10 +92,30 @@ const put = async ({ endpoint, rejectUnauthorized, path, qs, body }) => {
     }
 }
 
+
+const putFile = async ({ endpoint, rejectUnauthorized, path, qs, formData }) => {
+    const uri = uriBuilder({ endpoint, path, qs });
+    let result, error;
+    try {
+        return await request({
+            method: 'PUT',
+            json: true,
+            uri,
+            rejectUnauthorized,
+            formData
+        });
+    }
+    catch (e) {
+        error = getError(e.error);
+    }
+    return { error, result };
+}
+
 module.exports = {
     get,
     post,
     postFile,
     put,
+    putFile,
     del
 }

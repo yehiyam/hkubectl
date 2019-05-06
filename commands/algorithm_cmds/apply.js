@@ -1,51 +1,32 @@
 const os = require('os');
 const fse = require('fs-extra');
 const yaml = require('js-yaml');
-const { diff } = require('deep-diff');
 const merge = require('lodash.merge');
-const md5 = require('md5');
 const prettyjson = require('prettyjson');
-const { get, postFile } = require('../../helpers/request-helper');
-const applyPath = 'api/v1/store/algorithms/apply';
-const storePath = 'api/v1/store/algorithms';
+const { postFile } = require('../../helpers/request-helper');
+const applyPath = 'store/algorithms/apply';
 
-const handleAdd = async ({ endpoint, rejectUnauthorized, file, ...cli }) => {
+const handleAdd = async ({ endpoint, rejectUnauthorized, name, file, ...cli }) => {
 
     let result, error;
     try {
-        let stream, checksum;
-        const fileContent = readFile(file);
-        if (fileContent.error) {
-            throw new Error(fileContent.error);
+        let stream, fileData;
+        if (file) {
+            const fileContent = readFile(file);
+            if (fileContent.error) {
+                throw new Error(fileContent.error);
+            }
+            fileData = adaptFileData(fileContent.result);
         }
-        const fileData = adaptFileData(fileContent.result);
+
         const cliData = adaptCliData(cli);
-        const algorithmData = merge(fileData, cliData);
+        const algorithmData = merge(fileData, cliData, { name });
 
         const { code, ...algorithm } = algorithmData;
-
-        const alg = await get({
-            endpoint,
-            rejectUnauthorized,
-            path: `${storePath}/${algorithm.name}`
-        });
-
-        if (alg.error && alg.error.code === 'ECONNREFUSED') {
-            throw new Error(`unable to connect to ${endpoint}`);
-        }
-
-        if (code.path) {
-            const codePath = code.path;
-            const buffer = fse.readFileSync(codePath);
-            checksum = md5(buffer);
-        }
 
         const body = {
             ...algorithm,
             entryPoint: code.entryPoint,
-            fileInfo: {
-                checksum
-            },
             userInfo: {
                 platform: os.platform(),
                 hostname: os.hostname(),
@@ -53,8 +34,7 @@ const handleAdd = async ({ endpoint, rejectUnauthorized, file, ...cli }) => {
             }
         };
 
-        const shouldPost = shouldPostFile(alg.result, body);
-        if (shouldPost && code.path) {
+        if (code.path) {
             stream = fse.createReadStream(code.path);
         }
 
@@ -97,33 +77,14 @@ const adaptCliData = (cliData) => {
     return { env, algorithmImage: image, version: ver, cpu, gpu, mem, algorithmEnv, workerEnv, code: { path: codePath, entryPoint: codeEntryPoint } };
 };
 
-const CODE_UPDATE = [
-    'code.checksum',
-    'env'
-];
-
-const shouldPostFile = (algorithmOld, algorithmNew) => {
-    let shouldPostFile = false;
-    if (!algorithmOld) {
-        shouldPostFile = true;
-    }
-    else {
-        const differences = diff(algorithmOld, algorithmNew);
-        if (differences) {
-            shouldPostFile = differences.some(d => CODE_UPDATE.includes(d.path.join('.')));
-        }
-    }
-    return shouldPostFile;
-};
-
 module.exports = {
-    command: 'apply',
+    command: 'apply [name]',
     description: 'apply an algorithm',
     options: {
     },
     builder: {
         'file': {
-            demandOption: true,
+            demandOption: false,
             describe: 'the algorithm file',
             type: 'string',
             alias: ['f']

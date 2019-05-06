@@ -1,8 +1,8 @@
 const prettyjson = require('prettyjson');
 const { post } = require('../../helpers/request-helper');
 
-const handleAdd = async ({ endpoint, rejectUnauthorized, name, image, cpu, mem , workerEnv, algorithmEnv  }) => {
-    const path = 'api/v1/store/algorithms';
+const handleAdd = async ({ endpoint, rejectUnauthorized, name, image, cpu, mem, workerEnv, algorithmEnv }) => {
+    const path = 'store/algorithms';
     const body = {
         name,
         algorithmImage: image,

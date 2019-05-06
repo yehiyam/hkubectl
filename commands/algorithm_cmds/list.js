@@ -2,7 +2,7 @@ const { get } = require('../../helpers/request-helper');
 const prettyjson = require('prettyjson');
 
 const list = async (argv) => {
-    const path = 'api/v1/store/algorithms';
+    const path = 'store/algorithms';
     return get({
         ...argv,
         path

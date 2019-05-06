@@ -2,7 +2,7 @@ const { del } = require('../../helpers/request-helper');
 const prettyjson = require('prettyjson');
 
 const delHandler = async ({ endpoint, rejectUnauthorized, name }) => {
-    const path = `api/v1/store/algorithms/${name}`
+    const path = `store/algorithms/${name}`
     return del({
         endpoint,
         rejectUnauthorized,

@@ -2,7 +2,7 @@ const { get } = require('../../helpers/request-helper');
 const prettyjson = require('prettyjson');
 
 const getHandler = async ({ endpoint, rejectUnauthorized, name }) => {
-    const path = `api/v1/store/algorithms/${name ? name : ""}`
+    const path = `store/algorithms/${name ? name : ""}`
     return get({
         endpoint,
         rejectUnauthorized,

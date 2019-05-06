@@ -1,9 +1,12 @@
+const pathLib = require('path');
 const request = require('request-promise');
 const { URL } = require('url');
 const { getError } = require('./error-helper');
+const prefix = 'api/v1/';
 
 const uriBuilder = ({ endpoint, path, qs = {} }) => {
-    const url = new URL(path, endpoint);
+    const fullPath = pathLib.join(prefix, path);
+    const url = new URL(fullPath, endpoint);
     Object.entries(qs).forEach(([k, v]) => {
         url.searchParams.append(k, v);
     });
@@ -12,6 +15,7 @@ const uriBuilder = ({ endpoint, path, qs = {} }) => {
 
 const del = async ({ endpoint, rejectUnauthorized, path, qs }) => {
     const uri = uriBuilder({ endpoint, path, qs });
+    let result, error;
     try {
         return await request({
             method: 'DELETE',
@@ -20,9 +24,10 @@ const del = async ({ endpoint, rejectUnauthorized, path, qs }) => {
             json: true
         });
     }
-    catch (error) {
-        return getError(error);
+    catch (e) {
+        error = getError(e.error);
     }
+    return { error, result };
 };
 
 const get = async ({ endpoint, rejectUnauthorized, path, qs }) => {

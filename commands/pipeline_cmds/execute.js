@@ -5,7 +5,7 @@ const fs = require('fs');
 
 
 const executeHandler = async ({ endpoint, rejectUnauthorized, name = "", type = "stored", file = "" }) => {
-    const path = `api/v1/exec/${type}/`;
+    const path = `exec/${type}/`;
     let buffer = "{}";
 
     if (file != "") {

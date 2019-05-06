@@ -7,7 +7,6 @@ const { postFile } = require('../../helpers/request-helper');
 const applyPath = 'store/algorithms/apply';
 
 const handleAdd = async ({ endpoint, rejectUnauthorized, name, file, ...cli }) => {
-
     let result, error;
     try {
         let stream, fileData;

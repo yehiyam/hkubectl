@@ -1,8 +1,8 @@
-const commands = require('./algorithm_cmds/index.js');
+const commands = require('./readme/index');
 
-const algorithm = {
-    command: 'algorithm <command>',
-    description: 'Manage loaded algorithms',
+const exec = {
+    command: 'readme <command>',
+    description: 'Execution pipelines as raw or stored',
     builder: (yargs) => {
         Object.values(commands).forEach((cmd) => {
             yargs.command(cmd)
@@ -24,5 +24,5 @@ const algorithm = {
 }
 
 module.exports = {
-    algorithm
+    exec
 }

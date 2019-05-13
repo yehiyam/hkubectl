@@ -1,15 +1,18 @@
 #!/usr/bin/env node
 const yargs = require('yargs');
 const { readConfig } = require('./helpers/config');
-const { algorithm } = require('./commands/algorithm');
 const { config } = require('./commands/config');
-const { pipeline } = require('./commands/pipeline');
+const { exec } = require('./commands/exec');
+// const { readme } = require('./commands/readme');
+const { algorithms, pipelines } = require('./commands/store');
+
 const main = async () => {
   const configFile = await readConfig();
 
   yargs.config(configFile);
-  yargs.command(algorithm)
-  yargs.command(pipeline)
+  yargs.command(exec)
+  yargs.command(algorithms)
+  yargs.command(pipelines)
   yargs.command(config)
     .demandCommand()
     .help()

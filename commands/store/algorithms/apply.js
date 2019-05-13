@@ -3,10 +3,10 @@ const fse = require('fs-extra');
 const yaml = require('js-yaml');
 const merge = require('lodash.merge');
 const prettyjson = require('prettyjson');
-const { postFile } = require('../../helpers/request-helper');
+const { postFile } = require('../../../helpers/request-helper');
 const applyPath = 'store/algorithms/apply';
 
-const handleAdd = async ({ endpoint, rejectUnauthorized, name, file, ...cli }) => {
+const handleApply = async ({ endpoint, rejectUnauthorized, name, file, ...cli }) => {
     let result, error;
     try {
         let stream, fileData;
@@ -82,65 +82,65 @@ module.exports = {
     options: {
     },
     builder: {
-        'file': {
+        file: {
             demandOption: false,
             describe: 'the algorithm file',
             type: 'string',
             alias: ['f']
         },
-        'env': {
+        env: {
             describe: 'the algorithm env',
             type: 'string',
             alias: ['env']
         },
-        'image': {
+        image: {
             describe: 'the docker image for the algorithm',
             type: 'string',
             alias: ['i']
         },
-        'version': {
+        version: {
             describe: 'the version for docker image',
             type: 'string',
             alias: ['version']
         },
-        'codePath': {
+        codePath: {
             describe: 'the code path for the algorithm',
             type: 'string',
             alias: ['codePath']
         },
-        'codeEntryPoint': {
+        codeEntryPoint: {
             describe: 'the code entry point for the algorithm',
             type: 'string',
             alias: ['codeEntryPoint']
         },
-        'cpu': {
+        cpu: {
             describe: 'CPU requirements of the algorithm in cores',
             type: 'number',
             alias: ['cpu']
         },
-        'gpu': {
+        gpu: {
             describe: 'GPU requirements of the algorithm in cores',
             type: 'number',
             alias: ['gpu']
         },
-        'mem': {
+        mem: {
             describe: "memory requirements of the algorithm. Possible units are ['Ki', 'M', 'Mi', 'Gi', 'm', 'K', 'G', 'T', 'Ti', 'P', 'Pi', 'E', 'Ei']. Minimum is 4Mi",
             type: 'string',
             alias: ['mem']
         },
-        'workerEnv': {
+        workerEnv: {
             describe: 'key-value of environment variables for the worker containers. You can specify more than one. example: --workerEnv.foo=bar --workerEnv.baz=bar',
             type: 'object',
             alias: ['workerEnv']
         },
-        'algorithmEnv': {
+        algorithmEnv: {
             describe: 'key-value of environment variables for the algorithm containers. You can specify more than one. example: --algorithmEnv.foo=bar --algorithmEnv.baz=bar',
             type: 'object',
             alias: ['algorithmEnv']
         }
     },
     handler: async (argv) => {
-        const ret = await handleAdd(argv);
+        const ret = await handleApply(argv);
         console.log(prettyjson.render(ret));
     }
 }

@@ -18,6 +18,7 @@ const resolveConfigPath = async (createIfNotFound) => {
   }
   return configPath;
 }
+
 const readConfig = async () => {
   const configPath = await resolveConfigPath();
   if (!configPath) {
@@ -30,7 +31,6 @@ const readConfig = async () => {
   } catch (error) {
     return {};
   }
-
 };
 
 module.exports = {

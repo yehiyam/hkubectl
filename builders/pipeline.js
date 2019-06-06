@@ -1,14 +1,13 @@
-const commands = require('./store/algorithms');
+const commands = require('../commands/store/pipelines');
 
-const algorithms = {
-    command: 'algorithm <command>',
+const pipelines = {
+    command: 'pipeline <command>',
     description: 'Manage loaded algorithms',
     builder: (yargs) => {
         Object.values(commands).forEach((cmd) => {
             yargs.command(cmd)
         });
         yargs.options('endpoint', {
-            alias: ['e'],
             description: 'url of hkube api endpoint',
             type: "string",
             default: 'http://127.0.0.1/hkube/api-server/'
@@ -23,4 +22,4 @@ const algorithms = {
     handler: () => { }
 }
 
-module.exports = algorithms;
+module.exports = pipelines;

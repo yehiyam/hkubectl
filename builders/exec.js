@@ -1,4 +1,4 @@
-const commands = require('./exec/index');
+const commands = require('../commands/exec/index');
 
 const exec = {
     command: 'exec <command>',

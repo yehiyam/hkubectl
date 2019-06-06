@@ -1,15 +1,12 @@
-const path = require('path');
 const prettyjson = require('prettyjson');
 const fs = require('fs-extra')
 const { resolveConfigPath } = require('../../helpers/config');
 
-const handler = async ({ key, value }) => {
+const handler = async () => {
     const configPath = await resolveConfigPath(true);
     const config = await fs.readJson(configPath);
     return config;
 }
-
-
 
 module.exports = {
     command: 'get',
@@ -23,4 +20,3 @@ module.exports = {
         console.log(prettyjson.render(ret));
     }
 }
-//https://40.69.222.75/hkube/api-server/loca

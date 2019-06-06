@@ -1,4 +1,4 @@
-const commands = require('./config/index.js');
+const commands = require('../commands/config/index.js');
 
 const config = {
     command: 'config <command>',

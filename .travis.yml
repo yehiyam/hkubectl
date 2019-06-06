@@ -1,42 +1,41 @@
 sudo: required
 language: node_js
 node_js:
-- '10'
+  - "10"
 services:
-- docker
+  - docker
 branches:
   only:
-  - master
+    - master
 install:
-- npm install
-- npm install -g snyk
-- snyk test || true
+  - npm install
+  - npm install -g snyk
+  - snyk test || true
 cache:
   directories:
-  - node_modules
+    - node_modules
 script:
-- NODE_ENV=test npm run-script test-travis
+  - NODE_ENV=test npm run-script test-travis
 after_script: cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js
 after_success:
-- |
-  if ([ "$TRAVIS_BRANCH" == "master" ] || [ ! -z "$TRAVIS_TAG" ]) && [ "$TRAVIS_PULL_REQUEST" == "false" ]; then
-    git config --global user.email "travis@travis-ci.org"
-    git config --global user.name "Travis CI"
-    git remote set-url --push origin "https://${GH_TOKEN}@github.com/${TRAVIS_REPO_SLUG}.git"
-    git remote -v
-    git checkout -f -b version-branch
-    npm version patch -m "$(git log -1 --pretty=%B) .... bump version [skip ci]"
-    git push origin version-branch:master --follow-tags
-    npx pkg --targets=linux .
-    tar cfvz hkubectl.tgz hkubectl
-    snyk monitor
-  else
-    echo "version skiped!"
-  fi
+  - |
+    if ([ "$TRAVIS_BRANCH" == "master" ] || [ ! -z "$TRAVIS_TAG" ]) && [ "$TRAVIS_PULL_REQUEST" == "false" ]; then
+      git config --global user.email "travis@travis-ci.org"
+      git config --global user.name "Travis CI"
+      git remote set-url --push origin "https://${GH_TOKEN}@github.com/${TRAVIS_REPO_SLUG}.git"
+      git remote -v
+      git checkout -f -b version-branch
+      npm version patch -m "$(git log -1 --pretty=%B) .... bump version [skip ci]"
+      git push origin version-branch:master --follow-tags
+      npx pkg --targets=linux .
+      snyk monitor
+    else
+      echo "version skiped!"
+    fi
 deploy:
   - provider: releases
     api_key: "$GH_TOKEN"
-    file: "./hkubectl.tgz"
+    file: "hkubectl"
     skip_cleanup: true
   - provider: npm
     skip_cleanup: true
@@ -44,4 +43,3 @@ deploy:
     api_key: "$NPM_AUTH_TOKEN"
     on:
       branch: master
-

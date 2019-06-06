@@ -1,5 +1,6 @@
-const commands = require('./pipeline_cmds/index.js');
-const pipeline = {
+const commands = require('./store/pipelines');
+
+const pipelines = {
     command: 'pipeline <command>',
     description: 'Manage loaded algorithms',
     builder: (yargs) => {
@@ -21,6 +22,4 @@ const pipeline = {
     handler: () => { }
 }
 
-module.exports = {
-    pipeline
-}
+module.exports = pipelines;

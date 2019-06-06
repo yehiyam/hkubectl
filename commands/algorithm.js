@@ -1,6 +1,6 @@
-const commands = require('./algorithm_cmds/index.js');
+const commands = require('./store/algorithms');
 
-const algorithm = {
+const algorithms = {
     command: 'algorithm <command>',
     description: 'Manage loaded algorithms',
     builder: (yargs) => {
@@ -23,6 +23,4 @@ const algorithm = {
     handler: () => { }
 }
 
-module.exports = {
-    algorithm
-}
+module.exports = algorithms;

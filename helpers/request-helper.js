@@ -13,21 +13,27 @@ const uriBuilder = ({ endpoint, path, qs = {} }) => {
     return url;
 }
 
-const del = async ({ endpoint, rejectUnauthorized, path, qs }) => {
+const _request = async ({ endpoint, rejectUnauthorized, path, method, body, formData, qs }) => {
     const uri = uriBuilder({ endpoint, path, qs });
     let result, error;
     try {
-        return await request({
-            method: 'DELETE',
+        result = await request({
+            method,
             uri,
             rejectUnauthorized,
-            json: true
+            json: true,
+            body,
+            formData
         });
     }
     catch (e) {
         error = getError(e.error);
     }
     return { error, result };
+};
+
+const del = async ({ endpoint, rejectUnauthorized, path, qs }) => {
+    return _request({ endpoint, rejectUnauthorized, path, qs, method: 'DELETE' });
 };
 
 const get = async ({ endpoint, rejectUnauthorized, path, qs }) => {
@@ -48,72 +54,20 @@ const get = async ({ endpoint, rejectUnauthorized, path, qs }) => {
 };
 
 const post = async ({ endpoint, rejectUnauthorized, path, qs, body }) => {
-    const uri = uriBuilder({ endpoint, path, qs });
-    try {
-        return await request({
-            method: 'POST',
-            json: true,
-            uri,
-            rejectUnauthorized,
-            body
-        });
-    }
-    catch (error) {
-        return getError(error);
-    }
+    return _request({ endpoint, rejectUnauthorized, path, qs, body, method: 'POST' });
 }
 
 const postFile = async ({ endpoint, rejectUnauthorized, path, qs, formData }) => {
-    const uri = uriBuilder({ endpoint, path, qs });
-    let result, error;
-    try {
-        return await request({
-            method: 'POST',
-            json: true,
-            uri,
-            rejectUnauthorized,
-            formData
-        });
-    }
-    catch (e) {
-        error = getError(e.error);
-    }
-    return { error, result };
+    return _request({ endpoint, rejectUnauthorized, path, qs, formData, method: 'POST' });
 }
 
 const put = async ({ endpoint, rejectUnauthorized, path, qs, body }) => {
-    const uri = uriBuilder({ endpoint, path, qs });
-    try {
-        return await request({
-            method: 'PUT',
-            json: true,
-            uri,
-            rejectUnauthorized,
-            body
-        });
-    }
-    catch (error) {
-        return getError(error);
-    }
+    return _request({ endpoint, rejectUnauthorized, path, qs, body, method: 'PUT' });
 }
 
 
 const putFile = async ({ endpoint, rejectUnauthorized, path, qs, formData }) => {
-    const uri = uriBuilder({ endpoint, path, qs });
-    let result, error;
-    try {
-        return await request({
-            method: 'PUT',
-            json: true,
-            uri,
-            rejectUnauthorized,
-            formData
-        });
-    }
-    catch (e) {
-        error = getError(e.error);
-    }
-    return { error, result };
+    return _request({ endpoint, rejectUnauthorized, path, qs, formData, method: 'PUT' });
 }
 
 module.exports = {

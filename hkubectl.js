@@ -4,7 +4,8 @@ const { readConfig } = require('./helpers/config');
 const { config } = require('./commands/config');
 const { exec } = require('./commands/exec');
 // const { readme } = require('./commands/readme');
-const { algorithms, pipelines } = require('./commands/store');
+const algorithms = require('./commands/algorithm');
+const pipelines = require('./commands/pipeline');
 
 const main = async () => {
   const configFile = await readConfig();

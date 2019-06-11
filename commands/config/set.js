@@ -1,4 +1,5 @@
 const path = require('path')
+const { URL } = require('url');
 const prettyjson = require('prettyjson');
 const fs = require('fs-extra');
 const { resolveConfigPath } = require('../../helpers/config');
@@ -14,7 +15,10 @@ const handler = async ({ key, value }) => {
 
 const _resolveValue = ({ key, value }) => {
     if (key === 'endpoint') {
-        value = path.join(value, '/hkube/api-server/');
+        const url = new URL(value);
+        if (url.hostname !== 'localhost') {
+            value = path.join(value, '/hkube/api-server/');
+        }
     }
     return value;
 }

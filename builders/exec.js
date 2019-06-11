@@ -1,7 +1,7 @@
 const commands = require('../commands/exec/index');
 
 const exec = {
-    command: 'exec <command>',
+    command: 'pipeline exec <command>',
     description: 'Execution pipelines as raw or stored',
     builder: (yargs) => {
         Object.values(commands).forEach((cmd) => {

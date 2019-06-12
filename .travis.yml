@@ -25,7 +25,7 @@ after_success:
       git checkout -f -b version-branch
       npm version patch -m "$(git log -1 --pretty=%B) .... bump version [skip ci]"
       git push origin version-branch:master --follow-tags
-      npx pkg --targets=linux .
+      npx pkg .
       snyk monitor
     else
       echo "version skiped!"
@@ -33,7 +33,10 @@ after_success:
 deploy:
   - provider: releases
     api_key: "$GH_TOKEN"
-    file: "hkubectl"
+    file:
+      - "hkubectl-linux"
+      - "hkubectl-macos"
+      - "hkubectl-win.exe"
     skip_cleanup: true
   - provider: npm
     skip_cleanup: true

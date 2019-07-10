@@ -22,7 +22,7 @@
   },
   "homepage": "https://github.com/kube-HPC/hkubectl#readme",
   "dependencies": {
-    "@hkube/local-pipeline-driver": "^1.0.2",
+    "@hkube/local-pipeline-driver": "^1.0.3",
     "deep-diff": "^1.0.2",
     "find-up": "^2.1.0",
     "fs-extra": "^6.0.1",

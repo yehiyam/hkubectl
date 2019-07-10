@@ -6,7 +6,7 @@ const { exec } = require('./builders/exec');
 // const { readme } = require('./commands/readme');
 const algorithms = require('./builders/algorithm');
 const pipelines = require('./builders/pipeline');
-
+const dryRun = require('./builders/dry-run');
 const main = async () => {
   const configFile = await readConfig();
 
@@ -14,6 +14,7 @@ const main = async () => {
   yargs.command(exec)
   yargs.command(algorithms)
   yargs.command(pipelines)
+  yargs.command(dryRun)
   yargs.command(config)
     .demandCommand()
     .help()

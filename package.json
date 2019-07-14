@@ -1,6 +1,6 @@
 {
   "name": "@hkube/hkubectl",
-  "version": "1.1.31",
+  "version": "1.1.32",
   "description": "",
   "main": "hkubectl.js",
   "bin": {

@@ -72,8 +72,8 @@ const adaptFileData = (fileData) => {
 };
 
 const adaptCliData = (cliData) => {
-    const { env, image, ver, cpu, gpu, mem, algorithmEnv, workerEnv, codePath, codeEntryPoint } = cliData || {};
-    return { env, algorithmImage: image, version: ver, cpu, gpu, mem, algorithmEnv, workerEnv, code: { path: codePath, entryPoint: codeEntryPoint } };
+    const { env, image, ver, cpu, gpu, mem, algorithmEnv, workerEnv, codePath, codeEntryPoint, baseImage } = cliData || {};
+    return { env, algorithmImage: image, baseImage, version: ver, cpu, gpu, mem, algorithmEnv, workerEnv, code: { path: codePath, entryPoint: codeEntryPoint } };
 };
 
 module.exports = {

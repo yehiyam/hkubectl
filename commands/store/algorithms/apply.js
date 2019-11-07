@@ -66,9 +66,9 @@ const readFile = (file) => {
 };
 
 const adaptFileData = (fileData) => {
-    const { name, env, image, version, code, resources, algorithmEnv, workerEnv, minHotWorkers, nodeSelector } = fileData || {};
+    const { name, env, image, version, code, resources, algorithmEnv, workerEnv, minHotWorkers, nodeSelector, baseImage } = fileData || {};
     const { cpu, gpu, mem } = resources || {};
-    return { name, env, code: code || {}, version, algorithmImage: image, cpu, gpu, mem, algorithmEnv, workerEnv, minHotWorkers, nodeSelector };
+    return { name, env, code: code || {}, version, algorithmImage: image, baseImage, cpu, gpu, mem, algorithmEnv, workerEnv, minHotWorkers, nodeSelector };
 };
 
 const adaptCliData = (cliData) => {

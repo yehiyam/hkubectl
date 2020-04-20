@@ -66,14 +66,14 @@ const readFile = (file) => {
 };
 
 const adaptFileData = (fileData) => {
-    const { name, env, image, version, code, resources, algorithmEnv, workerEnv, minHotWorkers, nodeSelector, baseImage } = fileData || {};
+    const { name, env, image, version, code, resources, algorithmEnv, workerEnv, minHotWorkers, nodeSelector, baseImage, options } = fileData || {};
     const { cpu, gpu, mem } = resources || {};
-    return { name, env, code: code || {}, version, algorithmImage: image, baseImage, cpu, gpu, mem, algorithmEnv, workerEnv, minHotWorkers, nodeSelector };
+    return { name, env, code: code || {}, version, algorithmImage: image, baseImage, options, cpu, gpu, mem, algorithmEnv, workerEnv, minHotWorkers, nodeSelector };
 };
 
 const adaptCliData = (cliData) => {
-    const { env, image, ver, cpu, gpu, mem, algorithmEnv, workerEnv, codePath, codeEntryPoint, baseImage } = cliData || {};
-    return { env, algorithmImage: image, baseImage, version: ver, cpu, gpu, mem, algorithmEnv, workerEnv, code: { path: codePath, entryPoint: codeEntryPoint } };
+    const { env, image, ver, cpu, gpu, mem, algorithmEnv, workerEnv, codePath, codeEntryPoint, baseImage, options } = cliData || {};
+    return { env, algorithmImage: image, baseImage, version: ver, cpu, gpu, mem, algorithmEnv, workerEnv, options, code: { path: codePath, entryPoint: codeEntryPoint } };
 };
 
 module.exports = {

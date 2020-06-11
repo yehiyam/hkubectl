@@ -2,9 +2,9 @@
   "name": "@hkube/hkubectl",
   "version": "1.1.37",
   "description": "",
-  "main": "hkubectl.js",
+  "main": "hkubectl",
   "bin": {
-    "hkubectl": "./hkubectl.js"
+    "hkubectl": "./hkubectl"
   },
   "scripts": {
     "test": "mocha test --colors --recursive",

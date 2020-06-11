@@ -65,3 +65,4 @@ typings/
 
 .hkuberc
 .hkuberc.json
+hkubectl-*

@@ -2,8 +2,13 @@ const findUp = require('find-up');
 const fs = require('fs-extra')
 const path = require('path');
 const os = require('os');
+
+const configFolder = () => {
+  return path.join(os.homedir(), '.hkube');
+}
+
 const resolveConfigPath = async (createIfNotFound) => {
-  const cwds = [process.cwd(), path.join(process.cwd(), '.hkube'), path.join(os.homedir(), '.hkube')]
+  const cwds = [process.cwd(), path.join(process.cwd(), '.hkube'), configFolder()]
   let configPath;
   for (let cwd of cwds) {
     configPath = findUp.sync(['.hkuberc', '.hkuberc.json'], { cwd });
@@ -12,7 +17,7 @@ const resolveConfigPath = async (createIfNotFound) => {
     }
   }
   if (!configPath && createIfNotFound) {
-    configPath = path.join(os.homedir(), path.join('.hkube','.hkuberc'));
+    configPath = path.join(os.homedir(), path.join('.hkube', '.hkuberc'));
     await fs.ensureFile(configPath)
     await fs.writeJson(configPath, {});
   }
@@ -35,6 +40,7 @@ const readConfig = async () => {
 
 module.exports = {
   readConfig,
-  resolveConfigPath
+  resolveConfigPath,
+  configFolder
 }
 

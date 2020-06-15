@@ -14,12 +14,12 @@ const handler = async ({ key, value }) => {
 }
 
 const _resolveValue = ({ key, value }) => {
-    if (key === 'endpoint') {
-        const url = new URL(value);
-        if (url.hostname !== 'localhost') {
-            value = path.join(value, '/hkube/api-server/');
-        }
-    }
+    // if (key === 'endpoint') {
+    //     const url = new URL(value);
+    //     if (url.hostname !== 'localhost') {
+    //         value = path.join(value, '/hkube/api-server/');
+    //     }
+    // }
     return value;
 }
 

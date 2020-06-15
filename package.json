@@ -8,7 +8,8 @@
   },
   "scripts": {
     "test": "mocha test --colors --recursive",
-    "test-travis": "./node_modules/istanbul/lib/cli.js cover ./node_modules/mocha/bin/_mocha -- -R spec test"
+    "test-travis": "./node_modules/istanbul/lib/cli.js cover ./node_modules/mocha/bin/_mocha -- -R spec test",
+    "build-linux": "./node_modules/.bin/pkg -t node10-linux-x64 ."
   },
   "repository": {
     "type": "git",
@@ -22,20 +23,26 @@
   "homepage": "https://github.com/kube-HPC/hkubectl#readme",
   "dependencies": {
     "@hkube/local-pipeline-driver": "^1.0.3",
+    "axios": "^0.19.2",
+    "axios-retry": "^3.1.8",
     "deep-diff": "^1.0.2",
     "find-up": "^2.1.0",
     "fs-extra": "^6.0.1",
     "lodash.merge": "^4.6.1",
     "md5": "^2.2.1",
     "prettyjson": "^1.2.1",
-    "request": "^2.85.0",
-    "request-promise": "^4.2.2",
+    "pump": "^3.0.0",
     "uuid": "^3.3.2",
+    "websocket-stream": "^5.5.2",
     "yargs": "^11.0.0"
   },
   "devDependencies": {
     "chai": "^4.1.2",
     "istanbul": "^0.4.5",
+    "pkg": "^4.4.8",
     "mocha": "^5.1.1"
+  },
+  "pkg": {
+    "assets": ["helpers/syncthing/config.xml", "helpers/syncthing/syncthing"]
   }
 }

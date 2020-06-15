@@ -47,9 +47,11 @@ class Syncthing extends EventEmitter {
         });
         this._local = new Api({ apiKey: this._apiKey, baseUrl: `http://localhost:${this._restPort}`, name: 'local' })
         await this._local.isReady();
+        await this._local._getEvents();
         console.log(`local sync server ready`)
         this._remote = new Api({ apiKey: this._apiKey, baseUrl: tunnelUrl, name: 'remote' })
         await this._remote.isReady();
+        await this._remote._getEvents();
         console.log(`remote sync server ready`)
         this._local.on('event', data => this.emit('event', data));
         this._remote.on('event', data => this.emit('event', data))

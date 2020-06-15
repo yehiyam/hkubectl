@@ -19,32 +19,36 @@ class Syncthing extends EventEmitter {
         this._apiKey = 'hkubectl';
         this._headers = { 'X-API-KEY': this._apiKey }
     }
-    async _createConfig() {
+    async _copyDependencies() {
         await fs.ensureDir(this._configDir);
         await fs.ensureDir(this._binDir);
-        await this._copy(path.join(__dirname, './config.xml'), path.join(this._configDir, 'config.xml'));
+        // try to copy the exe first. If it fails, the server is already running
         await this._copy(path.join(__dirname, 'syncthing'), this._command);
+        await this._copy(path.join(__dirname, './config.xml'), path.join(this._configDir, 'config.xml'));
         await fs.chmod(this._command, '775')
     }
     async start({ envs = {}, port = 8384, tunnelUrl, tunnelPort } = {}) {
         this._restPort = port;
         this._tunnelPort = tunnelPort;
         console.log(`starting local sync server`)
-        await this._createConfig();
-        this._args = ["-gui-address", `localhost:${this._restPort}`, "-gui-apikey", this._apiKey, "-home", this._configDir, "-no-browser"]
-        this._proc = spawn(this._command, this._args, { env: { ...process.env, ...envs } });
+        try {
+            await this._copyDependencies();
+            this._args = ["-gui-address", `localhost:${this._restPort}`, "-gui-apikey", this._apiKey, "-home", this._configDir, "-no-browser"]
+            this._proc = spawn(this._command, this._args, { env: { ...process.env, ...envs } });
 
-        this._proc.stdout.on('data', async (d) => {
-            // console.log(d.toString());
-        });
-        this._proc.stderr.on('data', (d) => {
-            console.error(d.toString());
-        });
-        this._proc.on('close', (code) => {
-        });
-        this._proc.on('error', (err) => {
-            console.error(err.message || err)
-        });
+            this._proc.stderr.on('data', (d) => {
+                console.error(d.toString());
+            });
+            this._proc.on('close', (code) => {
+            });
+            this._proc.on('error', (err) => {
+                console.error(err.message || err)
+            });
+        }
+        catch (error) {
+            console.error(error.message || error);
+            console.log(`Unable to start local server. Server is probably already working`);
+        }
         this._local = new Api({ apiKey: this._apiKey, baseUrl: `http://localhost:${this._restPort}`, name: 'local' })
         await this._local.isReady();
         await this._local._getEvents();

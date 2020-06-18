@@ -10,9 +10,11 @@ const { events } = require('../../helpers/syncthing/consts');
 const watchHandler = async ({ endpoint, rejectUnauthorized, algorithmName, folder, port, bidi }) => {
     const tunnelUrl = `${endpoint}/${agentSyncIngressPath}`.replace('http', 'ws')
     try {
-        const ret = await socketTunnelClient(tunnelUrl, 'localhost:22000', port, { rejectUnauthorized });
+        const fullPath = path.resolve(folder);
+        console.log(`watching folder ${fullPath}`);
+        const ret = await socketTunnelClient(tunnelUrl, 'localhost:22000', port, { rejectUnauthorized:rejectUnauthorized==='true' });
         await syncthing.start({ tunnelUrl: `${endpoint}/${agentRestIngressPath}`, tunnelPort: port })
-        await syncthing.addFolder({ path: path.resolve(folder), algorithmName, bidi })
+        await syncthing.addFolder({ path: fullPath, algorithmName, bidi })
         syncthing.on('event', data => {
             if (data.folder !== algorithmName) {
                 return;

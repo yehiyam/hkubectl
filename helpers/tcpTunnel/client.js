@@ -3,7 +3,7 @@ const { createServer } = require('net')
 const pipe = require('pump')
 
 const onError = (err) => {
-	if (err) console.error(err.message || err)
+	if (err) console.error(`[Tunnel] ${err.messeage || err}`)
 }
 
 const startClient = (tunnel, target, port, options) => {

@@ -10,7 +10,7 @@ const { directions } = require('./consts');
 const Api = require('./api');
 
 const pipeline = promisify(stream.pipeline);
-
+const delay = promisify(setTimeout);
 class Syncthing extends EventEmitter {
     constructor() {
         super();
@@ -32,6 +32,7 @@ class Syncthing extends EventEmitter {
         if (os.platform() !== 'win32') {
             await fs.chmod(this._command, '775')
         }
+        await delay(1000)
     }
     async start({ envs = {}, port = 8384, tunnelUrl, tunnelPort } = {}) {
         this._restPort = port;

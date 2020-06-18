@@ -1,4 +1,3 @@
-sudo: required
 language: node_js
 node_js:
   - "10"
@@ -6,15 +5,12 @@ branches:
   only:
     - master
 install:
-  - npm install
-  - npm install -g snyk
-  - snyk test || true
+  - npm ci
 cache:
   directories:
     - node_modules
 script:
   - NODE_ENV=test npm run-script test-travis
-after_script: cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js
 after_success:
   - |
     if ([ "$TRAVIS_BRANCH" == "master" ] || [ ! -z "$TRAVIS_TAG" ]) && [ "$TRAVIS_PULL_REQUEST" == "false" ]; then
@@ -25,8 +21,7 @@ after_success:
       git checkout -f -b version-branch
       npm version patch -m "$(git log -1 --pretty=%B) .... bump version [skip ci]"
       git push origin version-branch:master --follow-tags
-      npx pkg .
-      snyk monitor
+      npm run build
     else
       echo "version skiped!"
     fi
@@ -34,13 +29,7 @@ deploy:
   - provider: releases
     api_key: "$GH_TOKEN"
     file:
-      - "hkubectl-linux"
-      - "hkubectl-macos"
-      - "hkubectl-win.exe"
+      - "output/hkubectl-linux"
+      - "output/hkubectl-macos"
+      - "output/hkubectl-win.exe"
     skip_cleanup: true
-  - provider: npm
-    skip_cleanup: true
-    email: yehiyam@gmail.com
-    api_key: "$NPM_AUTH_TOKEN"
-    on:
-      branch: master

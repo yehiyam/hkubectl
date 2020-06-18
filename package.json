@@ -8,8 +8,11 @@
   },
   "scripts": {
     "test": "mocha test --colors --recursive",
-    "test-travis": "./node_modules/istanbul/lib/cli.js cover ./node_modules/mocha/bin/_mocha -- -R spec test",
-    "build-linux": "./node_modules/.bin/pkg -t node10-linux-x64 ."
+    "test-travis": "echo No tests specified",
+    "build-linux": "./scripts/build.sh linux",
+    "build-macos": "./scripts/build.sh macos",
+    "build-win": "./scripts/build.sh win",
+    "build": "npm run build-linux && npm run build-macos && npm run build-win"
   },
   "repository": {
     "type": "git",

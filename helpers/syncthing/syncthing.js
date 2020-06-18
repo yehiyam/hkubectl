@@ -1,5 +1,6 @@
 const EventEmitter = require('events');
 const fs = require('fs-extra');
+const os = require('os');
 const path = require('path');
 const { promisify } = require('util');
 const { spawn } = require('child_process');
@@ -16,6 +17,9 @@ class Syncthing extends EventEmitter {
         this._configDir = path.join(configFolder(), 'syncthing');
         this._binDir = path.join(configFolder(), 'syncthing', 'bin');
         this._command = path.join(this._binDir, 'syncthing')
+        if (os.platform() === 'win32') {
+            this._command = `${this._command}.exe`
+        }
         this._apiKey = 'hkubectl';
         this._headers = { 'X-API-KEY': this._apiKey }
     }
@@ -25,7 +29,9 @@ class Syncthing extends EventEmitter {
         // try to copy the exe first. If it fails, the server is already running
         await this._copy(path.join(__dirname, 'syncthing'), this._command);
         await this._copy(path.join(__dirname, './config.xml'), path.join(this._configDir, 'config.xml'));
-        await fs.chmod(this._command, '775')
+        if (os.platform() !== 'win32') {
+            await fs.chmod(this._command, '775')
+        }
     }
     async start({ envs = {}, port = 8384, tunnelUrl, tunnelPort } = {}) {
         this._restPort = port;

@@ -41,13 +41,14 @@ module.exports = {
             demandOption: true,
             describe: 'The name of the algorithm to sync data into',
             type: 'string',
-            alias: ['algorithm-name', 'a']
+            alias: ['a']
         },
         folder: {
             demandOption: false,
             describe: 'local folder to sync.',
             default: './',
-            type: 'string'
+            type: 'string',
+            alias: ['f']
         },
         port: {
             demandOption: false,

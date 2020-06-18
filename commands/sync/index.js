@@ -1,5 +1,7 @@
 const watch = require('./watch');
+const create = require('./create');
 
 module.exports = {
-    watch
+    watch,
+    create
 }

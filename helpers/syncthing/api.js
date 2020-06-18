@@ -106,8 +106,10 @@ class SyncthingApi extends EventEmitter {
                 since: this._lastEventId
             },
         });
-        const events = ret.data
-        this._lastEventId = events ? events[events.length - 1].id : 0;
+        const events = ret.data || []
+        if (events && events.length) {
+            this._lastEventId = events[events.length - 1].id;
+        }
         return events;
     }
 

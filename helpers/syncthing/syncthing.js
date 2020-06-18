@@ -69,7 +69,7 @@ class Syncthing extends EventEmitter {
         await this._local.addDevice({ deviceID: this._remote.deviceID, url: `tcp://localhost:${this._tunnelPort}` });
         await this._remote.addDevice({ deviceID: this._local.deviceID });
         await this._local.addFolder({ path, id, direction: localDirection, ownerID: this._remote.deviceID });
-        await this._remote.addFolder({ path: `/sources/${algorithmName}`, id, direction: remoteDirection, ownerID: this._local.deviceID });
+        await this._remote.addFolder({ path: `/sources/algorithms/${algorithmName}`, id, direction: remoteDirection, ownerID: this._local.deviceID });
     }
 
     _copy(source, target) {

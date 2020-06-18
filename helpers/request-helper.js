@@ -3,6 +3,9 @@ const axios = require('axios').default;
 const https = require('https');
 const { URL } = require('url');
 const { getError } = require('./error-helper');
+const { promisify } = require('util');
+const sleep = promisify(setTimeout);
+
 const apiPrefix = 'api/v1/';
 const apiServerPrefix = '/hkube/api-server/';
 
@@ -29,8 +32,8 @@ const _request = async ({ endpoint, rejectUnauthorized, path, method, body, form
             url,
             httpsAgent: https.Agent({ rejectUnauthorized }),
             json: true,
-            body,
-            formData
+            data: body || formData,
+            headers: formData ? formData.getHeaders() : {}
         });
     }
     catch (e) {
@@ -60,6 +63,23 @@ const get = async ({ endpoint, rejectUnauthorized, path, qs }) => {
     return { error, result: result.data };
 };
 
+const getUntil = async (getOptions, condition, timeout = 20000) => {
+    if (!condition) {
+        return { error: 'condition function not specified' };
+    }
+    const startTime = Date.now();
+    while (true) {
+        if (Date.now() - startTime > timeout) {
+            return { error: 'time out waiting for condition' };
+        }
+        const res = await get(getOptions);
+        const conditionResult = condition(res);
+        if (conditionResult) {
+            return res;
+        }
+        await sleep(1000);
+    }
+}
 const post = async ({ endpoint, rejectUnauthorized, path, qs, body }) => {
     return _request({ endpoint, rejectUnauthorized, path, qs, body, method: 'POST' });
 }
@@ -83,5 +103,6 @@ module.exports = {
     postFile,
     put,
     putFile,
-    del
+    del,
+    getUntil
 }

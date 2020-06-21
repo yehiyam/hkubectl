@@ -4,6 +4,7 @@ const stored = require('./stored');
 const stop = require('./stop');
 const status = require('./status');
 const result = require('./result');
+const algorithm = require('./algorithm');
 
 module.exports = {
     get,
@@ -11,5 +12,6 @@ module.exports = {
     stored,
     stop,
     status,
-    result
+    result,
+    algorithm
 };

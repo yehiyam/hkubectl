@@ -66,3 +66,5 @@ typings/
 .hkuberc
 .hkuberc.json
 hkubectl-*
+helpers/syncthing/syncthing
+output

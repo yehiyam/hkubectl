@@ -1,6 +1,7 @@
 const prettyjson = require('prettyjson');
 const fse = require('fs-extra');
 const yaml = require('js-yaml');
+var FormData = require('form-data');
 const { post, postFile } = require('../../../helpers/request-helper');
 const path = 'store/pipelines';
 
@@ -24,14 +25,13 @@ const handleAdd = async ({ endpoint, rejectUnauthorized, file, readmeFile }) => 
 const readmeAdd = async (readmeFile, endpoint, rejectUnauthorized, name) => {
   const path = `readme/pipelines/${name}`;
   let stream = fse.createReadStream(readmeFile);
-  const formData = {
-    "README.md": {
-      value: stream,
-      options: {
-        filename: "README.md"
-      }
+  const formData = new FormData();
+  formData.append('README.md', {
+    value: stream,
+    options: {
+      filename: "README.md"
     }
-  };
+  })
   await postFile({
     endpoint,
     rejectUnauthorized,

@@ -46,8 +46,8 @@
   "devDependencies": {
     "chai": "^4.1.2",
     "istanbul": "^0.4.5",
-    "pkg": "^4.4.8",
-    "mocha": "^5.1.1"
+    "mocha": "^5.1.1",
+    "pkg": "4.3.8"
   },
   "pkg": {
     "assets": [

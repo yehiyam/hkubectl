@@ -18,6 +18,16 @@ const main = async () => {
   yargs.command(dryRun)
   yargs.command(sync)
   yargs.command(config)
+  yargs.options('rejectUnauthorized', {
+    description: 'set to false to ignore certificate signing errors. Useful for self signed TLS certificate',
+    type: "boolean",
+    default: "true"
+  })
+  yargs.options('endpoint', {
+    description: 'url of hkube api endpoint',
+    type: "string",
+    default: 'http://127.0.0.1'
+  })
     .demandCommand()
     .help()
     .epilog('for more information visit http://hkube.io')

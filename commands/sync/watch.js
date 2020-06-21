@@ -1,5 +1,4 @@
 const path = require('path');
-const prettyjson = require('prettyjson');
 const socketTunnelClient = require('../../helpers/tcpTunnel/client');
 const agentSyncIngressPath = '/hkube/sync/sync'
 const agentRestIngressPath = '/hkube/sync/ui'
@@ -12,7 +11,7 @@ const watchHandler = async ({ endpoint, rejectUnauthorized, algorithmName, folde
     try {
         const fullPath = path.resolve(folder);
         console.log(`watching folder ${fullPath}`);
-        const ret = await socketTunnelClient(tunnelUrl, 'localhost:22000', port, { rejectUnauthorized:rejectUnauthorized==='true' });
+        await socketTunnelClient(tunnelUrl, 'localhost:22000', port, { rejectUnauthorized });
         await syncthing.start({ tunnelUrl: `${endpoint}/${agentRestIngressPath}`, tunnelPort: port })
         await syncthing.addFolder({ path: fullPath, algorithmName, bidi })
         syncthing.on('event', data => {
@@ -30,7 +29,7 @@ const watchHandler = async ({ endpoint, rejectUnauthorized, algorithmName, folde
         })
 
     } catch (error) {
-        console.error(`error connecting to cluster. Error: ${error.message}`)
+        console.error(`error connecting sync server. Error: ${error.message}`)
     }
 }
 module.exports = {
@@ -68,6 +67,6 @@ module.exports = {
         }
     },
     handler: async (argv) => {
-        const ret = await watchHandler(argv)
+        await watchHandler(argv)
     }
 }

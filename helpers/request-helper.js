@@ -47,20 +47,7 @@ const del = async ({ endpoint, rejectUnauthorized, path, qs }) => {
 };
 
 const get = async ({ endpoint, rejectUnauthorized, path, qs }) => {
-    const url = uriBuilder({ endpoint, path, qs });
-    let result, error;
-    try {
-        result = await axios({
-            method: 'GET',
-            url,
-            httpsAgent: https.Agent({ rejectUnauthorized }),
-            json: true
-        });
-    }
-    catch (e) {
-        error = getError(e);
-    }
-    return { error, result: result.data };
+    return _request({ endpoint, rejectUnauthorized, path, qs, method: 'GET' });
 };
 
 const getUntil = async (getOptions, condition, timeout = 20000) => {

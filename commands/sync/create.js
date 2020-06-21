@@ -1,14 +1,10 @@
 const path = require('path');
-const prettyjson = require('prettyjson');
-const socketTunnelClient = require('../../helpers/tcpTunnel/client');
-const agentSyncIngressPath = '/hkube/sync/sync'
-const agentRestIngressPath = '/hkube/sync/ui'
-const syncthing = require('../../helpers/syncthing/syncthing.js');
-const { events } = require('../../helpers/syncthing/consts');
+const ora = require('ora');
 const { zipDirectory } = require('../../helpers/zipper');
 const { handleApply } = require('../store/algorithms/applyImpl');
 const { getUntil, post, get } = require('../../helpers/request-helper');
-
+const { buildDoneEvents } = require('../../helpers/syncthing/consts');
+const { stat } = require('fs');
 const createHandler = async ({ endpoint, rejectUnauthorized, algorithmName, folder, entryPoint, env, baseImage }) => {
     try {
         const fullFolderPath = path.resolve(folder);
@@ -25,7 +21,7 @@ const createHandler = async ({ endpoint, rejectUnauthorized, algorithmName, fold
             baseImage
         }
         const applyRes = await handleApply({
-            endpoint, rejectUnauthorized, name: algorithmName, zipFileName, ...algorithmData
+            endpoint, rejectUnauthorized, name: algorithmName, ...algorithmData
         })
         const error = applyRes.error || applyRes.result.error;
         if (error) {
@@ -34,33 +30,46 @@ const createHandler = async ({ endpoint, rejectUnauthorized, algorithmName, fold
         }
         console.log(applyRes.result.result.messages.join('\n'))
         const buildId = applyRes.result.result.buildId;
+        let buildStatus = buildDoneEvents.completed;
+
         if (buildId) {
             // wait for build
-            console.log(`build ${buildId} in progress.`);
+            const spinner = ora({text: `build ${buildId} in progress.`, spinner: 'line'}).start()
             let lastStatus = '';
             const buildResult = await getUntil({ endpoint, rejectUnauthorized, path: `builds/status/${buildId}` }, (res) => {
                 if (lastStatus !== res.result.status) {
-                    console.log(res.result.status)
+                    spinner.text = res.result.status
                 }
                 lastStatus = res.result.status;
-                return (res.result.status === 'completed')
+                return (Object.values(buildDoneEvents).includes(res.result.status))
             }, 1000 * 60 * 10)
-            const { algorithmImage, version } = buildResult.result
-            console.log(`Setting version ${version} as current`);
-            const setVersionRes = await post({
-                endpoint, rejectUnauthorized, path: `versions/algorithms/apply`, body: {
-                    name: algorithmName,
-                    image: algorithmImage,
-                    force: true
-                }
-            })
+            const { algorithmImage, version, status } = buildResult.result
+            if (status === buildDoneEvents.completed) {
+                spinner.succeed();
+                console.log(`Setting version ${version} as current`);
+                await post({
+                    endpoint, rejectUnauthorized, path: `versions/algorithms/apply`, body: {
+                        name: algorithmName,
+                        image: algorithmImage,
+                        force: true
+                    }
+                })
+
+            }
+            else {
+                spinner.fail();
+                buildStatus = status;
+                console.log(`built ${buildId} ${status}`)
+            }
         }
-        console.log(`algorithm ${algorithmName} is ready`)
-        console.log('to sync the folder to the algorithm run')
-        console.log(`hkubectl sync watch -a ${algorithmName} -f ${folder}`)
+        if (buildStatus === buildDoneEvents.completed) {
+            console.log(`algorithm ${algorithmName} is ready`)
+            console.log('to sync the folder to the algorithm run')
+            console.log(`hkubectl sync watch -a ${algorithmName} -f ${folder}`)
+        }
 
     } catch (error) {
-        console.error(`error connecting to cluster. Error: ${error.message}`)
+        console.error(`error Creating algorithm. Error: ${error.message}`)
     }
 }
 module.exports = {
@@ -100,6 +109,6 @@ module.exports = {
         }
     },
     handler: async (argv) => {
-        const ret = await createHandler(argv)
+        await createHandler(argv)
     }
 }

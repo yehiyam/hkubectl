@@ -18,14 +18,10 @@ class SyncthingApi extends EventEmitter {
         this._lastEventId = 0;
     }
     async isReady() {
-        try {
-            const config = await this._axios.get(`${this._baseUrl}/rest/system/ping`, {
-                headers: this._headers
-            });
-            this.deviceID = config.headers['x-syncthing-id']
-        } catch (error) {
-
-        }
+        const config = await this._axios.get(`${this._baseUrl}/rest/system/ping`, {
+            headers: this._headers
+        });
+        this.deviceID = config.headers['x-syncthing-id']
     }
     async getConfig() {
         const ret = await this._axios.get(`${this._baseUrl}/rest/system/config`, {
@@ -79,7 +75,7 @@ class SyncthingApi extends EventEmitter {
         }
     }
 
-    async getEvents(stop = () => { }) {
+    async getEvents() {
         const validEvents = Object.keys(events);
         while (true) {
             try {

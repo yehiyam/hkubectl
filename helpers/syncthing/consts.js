@@ -7,5 +7,10 @@ module.exports = {
     events:{
         FolderSummary: 'FolderSummary',
         FolderCompletion: 'FolderCompletion'
+    },
+    buildDoneEvents:{
+        completed:'completed',
+        failed:'failed',
+        stopped:'stopped'
     }
 }

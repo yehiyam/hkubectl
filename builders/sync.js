@@ -7,7 +7,7 @@ const sync = {
         Object.values(commands).forEach((cmd) => {
             yargs.command(cmd)
         });
-
+        
         return yargs;
     },
     handler: () => { }

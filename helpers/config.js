@@ -38,9 +38,27 @@ const readConfig = async () => {
   }
 };
 
+const writeValue = async ({ key, value }) => {
+  const configPath = await resolveConfigPath(true);
+  const config = await fs.readJson(configPath);
+  const newConfig = { ...config, [key]: value };
+  await fs.writeJson(configPath, newConfig, { spaces: 2 });
+  return newConfig;
+}
+
+const writeValues = async (values = {}) => {
+  const configPath = await resolveConfigPath(true);
+  const config = await fs.readJson(configPath);
+  const newConfig = { ...config, ...values };
+  await fs.writeJson(configPath, newConfig, { spaces: 2 });
+  return newConfig;
+}
+
 module.exports = {
   readConfig,
   resolveConfigPath,
-  configFolder
+  configFolder,
+  writeValue,
+  writeValues
 }
 

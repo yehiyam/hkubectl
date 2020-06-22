@@ -2,14 +2,10 @@ const path = require('path')
 const { URL } = require('url');
 const prettyjson = require('prettyjson');
 const fs = require('fs-extra');
-const { resolveConfigPath } = require('../../helpers/config');
+const { writeValue } = require('../../helpers/config');
 
 const handler = async ({ key, value }) => {
-    const configPath = await resolveConfigPath(true);
-    const config = await fs.readJson(configPath);
-    const newConfig = { ...config, [key]: value };
-    await fs.writeJson(configPath, newConfig, { spaces: 2 });
-    return newConfig;
+    return writeValue;
 }
 
 module.exports = {

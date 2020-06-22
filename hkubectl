@@ -1,5 +1,6 @@
 #!/usr/bin/env node
 const yargs = require('yargs');
+const chalk = require('chalk');
 const { readConfig } = require('./helpers/config');
 const { config } = require('./builders/config');
 const { exec } = require('./builders/exec');
@@ -29,13 +30,13 @@ const main = async () => {
     .recommendCommands()
     .showHelpOnFail()
     .help()
-    .epilog('for more information visit http://hkube.io')
+    .epilog(chalk.bold('for more information visit http://hkube.io'))
     .completion()
     .argv;
 
   const args = yargs.argv;
   if (args.endpoint) {
-    console.log(`${args.$0} is configured to ${args.endpoint}`);
+    console.log(`${chalk.bold(args.$0)} is configured to ${chalk.bold(args.endpoint)}`);
   }
   if (!args._[0]) {
     if (args.endpoint) {

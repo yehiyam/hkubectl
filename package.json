@@ -29,6 +29,7 @@
     "archiver": "^4.0.1",
     "axios": "^0.19.2",
     "axios-retry": "^3.1.8",
+    "chalk": "^4.1.0",
     "deep-diff": "^1.0.2",
     "find-up": "^2.1.0",
     "form-data": "^3.0.0",

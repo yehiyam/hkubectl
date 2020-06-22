@@ -12,7 +12,7 @@ const { buildDoneEvents } = require('../../../helpers/syncthing/consts');
 
 const applyPath = 'store/algorithms/apply';
 
-const waitForBuild = async ({ endpoint, rejectUnauthorized, name, forceVersion, applyRes }) => {
+const waitForBuild = async ({ endpoint, rejectUnauthorized, name, setCurrent, applyRes }) => {
     const error = applyRes.error || applyRes.result.error;
     if (error) {
         console.error(error.message || error);
@@ -35,7 +35,7 @@ const waitForBuild = async ({ endpoint, rejectUnauthorized, name, forceVersion, 
         const { algorithmImage, version, status } = buildResult.result
         if (status === buildDoneEvents.completed) {
             spinner.succeed();
-            if (forceVersion) {
+            if (setCurrent) {
                 console.log(`Setting version ${version} as current`);
                 await post({
                     endpoint, rejectUnauthorized, path: `versions/algorithms/apply`, body: {
@@ -113,7 +113,7 @@ const handleApply = async ({ endpoint, rejectUnauthorized, name, file, noWait, f
         });
         console.log(result.result.messages.join('\n'))
         if (!noWait) {
-            await waitForBuild({ endpoint, rejectUnauthorized, name: body.name, forceVersion, applyRes: { result } });
+            await waitForBuild({ endpoint, rejectUnauthorized, name: body.name, setCurrent, applyRes: { result } });
         }
     }
     catch (e) {

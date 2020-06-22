@@ -59,7 +59,7 @@ const waitForBuild = async ({ endpoint, rejectUnauthorized, name, forceVersion, 
     return { buildStatus };
 }
 
-const handleApply = async ({ endpoint, rejectUnauthorized, name, file, wait, forceVersion, ...cli }) => {
+const handleApply = async ({ endpoint, rejectUnauthorized, name, file, noWait, forceVersion, ...cli }) => {
     let result, error;
     try {
         let stream, fileData;
@@ -112,7 +112,7 @@ const handleApply = async ({ endpoint, rejectUnauthorized, name, file, wait, for
             path: applyPath
         });
         console.log(result.result.messages.join('\n'))
-        if (wait) {
+        if (!noWait) {
             await waitForBuild({ endpoint, rejectUnauthorized, name: body.name, forceVersion, applyRes: { result } });
         }
     }

@@ -1,5 +1,5 @@
 const prettyjson = require('prettyjson');
-const {handleApply} = require('./applyImpl');
+const { handleApply } = require('./applyImpl');
 
 module.exports = {
     command: 'apply [name]',
@@ -62,10 +62,23 @@ module.exports = {
             describe: 'key-value of environment variables for the algorithm containers. You can specify more than one. example: --algorithmEnv.foo=bar --algorithmEnv.baz=bar',
             type: 'object',
             alias: ['algorithmEnv']
+        },
+        noWait: {
+            describe: 'if true, does not wait for the build to finish',
+            type: 'boolean',
+            default: false,
+            alias:['w']
+        },
+        setCurrent: {
+            describe: 'if true, sets the new version as the current version',
+            type: 'boolean',
+            default: false
         }
     },
     handler: async (argv) => {
         const ret = await handleApply(argv);
-        console.log(prettyjson.render(ret));
+        if (ret.error){
+            console.log(prettyjson.render(ret.error));
+        }
     }
 }

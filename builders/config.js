@@ -13,7 +13,6 @@ const handler = async ({endpoint, rejectUnauthorized,...rest})=>{
             message: 'Enter the URL of your Hkube cluster',
             default: endpoint,
             validate: (value)=>{
-                // console.log(value)
                 return urlRegex.test(value) || 'Please enter a valid URL';
             }
         },

@@ -13,6 +13,9 @@ const main = async () => {
   const configFile = await readConfig();
 
   yargs.config(configFile);
+  if (yargs.argv.endpoint) {
+    console.log(`${chalk.bold(yargs.argv.$0)} is configured to ${chalk.bold(yargs.argv.endpoint)}`);
+  }
   yargs.command(exec)
   yargs.command(algorithms)
   yargs.command(pipelines)
@@ -35,9 +38,7 @@ const main = async () => {
     .argv;
 
   const args = yargs.argv;
-  if (args.endpoint) {
-    console.log(`${chalk.bold(args.$0)} is configured to ${chalk.bold(args.endpoint)}`);
-  }
+
   if (!args._[0]) {
     if (args.endpoint) {
       yargs.showHelp();

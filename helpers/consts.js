@@ -12,5 +12,10 @@ module.exports = {
         completed:'completed',
         failed:'failed',
         stopped:'stopped'
+    },
+    jobExecEvents:{
+        completed:'completed',
+        failed:'failed',
+        stopped:'stopped'
     }
 }

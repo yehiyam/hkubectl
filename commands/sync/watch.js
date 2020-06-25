@@ -3,7 +3,7 @@ const socketTunnelClient = require('../../helpers/tcpTunnel/client');
 const agentSyncIngressPath = '/hkube/sync/sync'
 const agentRestIngressPath = '/hkube/sync/ui'
 const syncthing = require('../../helpers/syncthing/syncthing.js');
-const { events } = require('../../helpers/syncthing/consts');
+const { events } = require('../../helpers/consts');
 
 
 const watchHandler = async ({ endpoint, rejectUnauthorized, algorithmName, folder, port, bidi }) => {

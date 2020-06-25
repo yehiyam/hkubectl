@@ -8,7 +8,7 @@ const ora = require('ora');
 
 const { postFile, getUntil, post } = require('../../../helpers/request-helper');
 const { zipDirectory } = require('../../../helpers/zipper');
-const { buildDoneEvents } = require('../../../helpers/syncthing/consts');
+const { buildDoneEvents } = require('../../../helpers/consts');
 
 const applyPath = 'store/algorithms/apply';
 

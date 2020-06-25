@@ -6,7 +6,7 @@ const { promisify } = require('util');
 const { spawn } = require('child_process');
 const stream = require('stream');
 const { configFolder } = require('../config');
-const { directions } = require('./consts');
+const { directions } = require('../consts');
 const Api = require('./api');
 
 const pipeline = promisify(stream.pipeline);

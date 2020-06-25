@@ -3,7 +3,7 @@ const https = require('https');
 const axiosRetry = require('axios-retry');
 const { promisify } = require('util');
 const EventEmitter = require('events');
-const { directions, events } = require('./consts');
+const { directions, events } = require('../consts');
 
 
 const sleep = promisify(setTimeout);

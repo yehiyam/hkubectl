@@ -39,7 +39,7 @@ const _request = async ({ endpoint, rejectUnauthorized, path, method, body, form
     catch (e) {
         error = getError(e);
     }
-    return { error, result: result.data };
+    return { error, result: result && result.data };
 };
 
 const del = async ({ endpoint, rejectUnauthorized, path, qs }) => {

@@ -59,7 +59,7 @@ const waitForBuild = async ({ endpoint, rejectUnauthorized, name, setCurrent, ap
     return { buildStatus };
 }
 
-const handleApply = async ({ endpoint, rejectUnauthorized, name, file, noWait, forceVersion, ...cli }) => {
+const handleApply = async ({ endpoint, rejectUnauthorized, name, file, noWait, setCurrent, ...cli }) => {
     let result, error;
     try {
         let stream, fileData;
@@ -70,7 +70,7 @@ const handleApply = async ({ endpoint, rejectUnauthorized, name, file, noWait, f
             }
             fileData = adaptFileData(fileContent.result);
         }
-        
+
         const cliData = adaptCliData(cli);
         const algorithmData = merge(fileData, cliData, { name });
         console.log(`Requesting build for algorithm ${algorithmData.name}`);
@@ -111,15 +111,19 @@ const handleApply = async ({ endpoint, rejectUnauthorized, name, file, noWait, f
             formData,
             path: applyPath
         });
-        console.log(result.result.messages.join('\n'))
-        if (!noWait) {
-            await waitForBuild({ endpoint, rejectUnauthorized, name: body.name, setCurrent, applyRes: { result } });
+        if (result.result) {
+            console.log(result.result.messages.join('\n'))
+            if (!noWait) {
+                await waitForBuild({ endpoint, rejectUnauthorized, name: body.name, setCurrent, applyRes: { result } });
+            }
         }
     }
     catch (e) {
         error = e.message;
     }
-    return { error, result };
+    return {
+        error: error || result.error, result
+    };
 };
 
 const readFile = (file) => {

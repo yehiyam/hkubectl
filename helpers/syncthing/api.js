@@ -1,10 +1,11 @@
 const axios = require('axios');
+const yargs = require('yargs');
 const https = require('https');
 const axiosRetry = require('axios-retry');
 const { promisify } = require('util');
 const EventEmitter = require('events');
 const { directions, events } = require('../consts');
-
+const { lock } = require('../locks');
 
 const sleep = promisify(setTimeout);
 class SyncthingApi extends EventEmitter {
@@ -36,7 +37,20 @@ class SyncthingApi extends EventEmitter {
         return ret.data;
     }
 
+
+
+    async setListenPort({ port }) {
+        try {
+            const currentConfig = await this.getConfig();
+            currentConfig.options.listenAddresses = [`tcp://0.0.0.0:${port}`];
+            await this.postConfig(currentConfig);
+        } catch (error) {
+            console.error(error.message || error)
+        }
+    }
+
     async addDevice({ deviceID, name, url }) {
+        const unlock = await lock('addDevice');
         try {
             const currentConfig = await this.getConfig();
             currentConfig.devices = currentConfig.devices.filter(f => f.deviceID !== deviceID);
@@ -48,9 +62,44 @@ class SyncthingApi extends EventEmitter {
             await this.postConfig(currentConfig);
         } catch (error) {
             console.error(error.message || error)
+        } finally {
+            unlock();
+        }
+    }
+
+    async removeDevice({ deviceID }) {
+        const unlock = await lock('removeDevice');
+        try {
+            const currentConfig = await this.getConfig();
+            currentConfig.devices = currentConfig.devices.filter(f => f.deviceID !== deviceID);
+            await this.postConfig(currentConfig);
+        } catch (error) {
+            console.error(error.message || error)
+        } finally {
+            unlock();
+        }
+    }
+
+    async removeFolderForDevice({ ownerID }) {
+        const unlock = await lock('removeFolderForDevice');
+        try {
+            if (yargs.argv.verbose){
+                console.log(`removing folders for device ${ownerID}`)
+            }
+            const currentConfig = await this.getConfig();
+            const folders = currentConfig.folders.filter(f => f.devices.find(d => d.deviceID === ownerID));
+            folders.forEach(f => f.devices = f.devices.filter(d => d.deviceID !== ownerID))
+            const foldersToRemove = folders.filter(f => f.devices.length === 1 && f.devices[0].deviceID === this.deviceID);
+            currentConfig.folders = currentConfig.folders.filter(f => !foldersToRemove.find(fr => f.id === fr.id));
+            await this.postConfig(currentConfig);
+        } catch (error) {
+            console.error(error.message || error)
+        } finally {
+            unlock();
         }
     }
     async addFolder({ path, id, direction, ownerID }) {
+        const unlock = await lock('addFolder');
         try {
             const ignoreDelete = direction === directions.sendonly;
             const currentConfig = await this.getConfig();
@@ -72,6 +121,8 @@ class SyncthingApi extends EventEmitter {
             await this.postConfig(currentConfig);
         } catch (error) {
             console.error(error.message || error)
+        } finally {
+            unlock();
         }
     }
 

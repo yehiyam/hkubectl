@@ -1,18 +1,28 @@
 const path = require('path');
+const getPort = require('get-port');
 const socketTunnelClient = require('../../helpers/tcpTunnel/client');
 const agentSyncIngressPath = '/hkube/sync/sync'
 const agentRestIngressPath = '/hkube/sync/ui'
 const syncthing = require('../../helpers/syncthing/syncthing.js');
 const { events } = require('../../helpers/consts');
+const { lock } = require('../../helpers/locks');
 
-
-const watchHandler = async ({ endpoint, rejectUnauthorized, algorithmName, folder, port, bidi }) => {
+const watchHandler = async ({ endpoint, rejectUnauthorized, algorithmName, folder, bidi }) => {
     const tunnelUrl = `${endpoint}/${agentSyncIngressPath}`.replace('http', 'ws')
     try {
         const fullPath = path.resolve(folder);
         console.log(`watching folder ${fullPath}`);
-        await socketTunnelClient(tunnelUrl, 'localhost:22000', port, { rejectUnauthorized });
-        await syncthing.start({ tunnelUrl: `${endpoint}/${agentRestIngressPath}`, tunnelPort: port })
+        let tunnelPort;
+        const unlock = await lock('tunnelPort');
+        try {
+            tunnelPort = await getPort({ port: 22001 });
+            await socketTunnelClient(tunnelUrl, 'localhost:22000', tunnelPort, { rejectUnauthorized });
+        } finally {
+            unlock()
+        }
+
+
+        await syncthing.start({ algorithmName, tunnelUrl: `${endpoint}/${agentRestIngressPath}`, tunnelPort})
         await syncthing.addFolder({ path: fullPath, algorithmName, bidi })
         syncthing.on('event', data => {
             if (data.folder !== algorithmName) {
@@ -50,13 +60,6 @@ module.exports = {
             default: './',
             type: 'string',
             alias: ['f']
-        },
-        port: {
-            demandOption: false,
-            describe: 'local listen port for syncthing',
-            default: '22001',
-            type: 'number',
-            alias: ['p']
         },
         bidirectional: {
             demandOption: false,

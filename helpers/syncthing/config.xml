@@ -18,5 +18,6 @@
         <autoUpgradeIntervalH>0</autoUpgradeIntervalH>
         <stunKeepaliveSeconds>0</stunKeepaliveSeconds>
         <defaultFolderPath></defaultFolderPath>
+        <listenAddress>default</listenAddress>
     </options>
 </configuration>

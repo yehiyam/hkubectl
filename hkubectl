@@ -9,7 +9,17 @@ const algorithms = require('./builders/algorithm');
 const pipelines = require('./builders/pipeline');
 const dryRun = require('./builders/dry-run');
 const sync = require('./builders/sync');
+const syncthing = require('./helpers/syncthing/syncthing.js');
+
+const handleSignals = () => {
+  process.on('SIGINT', async () => {
+    await syncthing.remove();
+    process.exit(0);
+  })
+}
 const main = async () => {
+  handleSignals();
+
   const configFile = await readConfig();
 
   yargs.config(configFile);
@@ -27,6 +37,10 @@ const main = async () => {
     description: 'url of hkube api endpoint',
     type: "string"
   })
+  yargs.options('verbose', {
+    description: 'verbose logging',
+    type: "boolean"
+  })
     .recommendCommands()
     .showHelpOnFail()
     .help()
@@ -40,7 +54,7 @@ const main = async () => {
     if (args.endpoint) {
       yargs.showHelp();
     }
-    else{
+    else {
       config.handler(args);
     }
   }

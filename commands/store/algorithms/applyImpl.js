@@ -5,6 +5,7 @@ const yaml = require('js-yaml');
 const merge = require('lodash.merge');
 const FormData = require('form-data');
 const ora = require('ora');
+const expandTilde = require('expand-tilde');
 
 const { postFile, getUntil, post } = require('../../../helpers/request-helper');
 const { zipDirectory } = require('../../../helpers/zipper');
@@ -88,9 +89,17 @@ const handleApply = async ({ endpoint, rejectUnauthorized, name, file, noWait, s
         };
 
         if (code.path) {
-            let codePath = path.resolve(
-                file ? path.dirname(file) : process.cwd(),
-                code.path);
+            let codePath;
+            const expandedPath = expandTilde(code.path);
+
+            if (path.isAbsolute(expandedPath)) {
+                codePath = path.resolve(expandedPath);
+            }
+            else {
+                codePath = path.resolve(
+                    file ? path.dirname(file) : process.cwd(),
+                    expandedPath);
+            }
             const stats = await fse.stat(codePath);
             if (stats.isDirectory()) {
                 // create zip file

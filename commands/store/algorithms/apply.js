@@ -18,7 +18,7 @@ module.exports = {
             env: {
                 describe: 'the algorithm env',
                 type: 'string',
-                choices: ['python', 'nodejs']
+                choices: ['python', 'nodejs', 'java']
 
             },
             codePath: {

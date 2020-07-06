@@ -54,6 +54,9 @@ module.exports = {
             }
         }
         yargs.middleware(async (args, yargs) => {
+            if (args.file){
+                return;
+            }
             const fillMissing = [
                 { name: 'env', type: 'list' },
                 { name: 'codeEntryPoint', type: 'input' },

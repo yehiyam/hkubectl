@@ -1,7 +1,6 @@
-const prettyjson = require('prettyjson');
+const { log } = require('../../../helpers/output');
 const { handleApply } = require('./applyImpl');
 const { askMissingValues } = require('../../../helpers/input');
-const input = require('../../../helpers/input');
 
 module.exports = {
     command: 'apply [name]',
@@ -9,6 +8,11 @@ module.exports = {
     options: {
     },
     builder: (yargs) => {
+        yargs.positional('name', {
+            demandOption: 'Please provide the algorithm name',
+            describe: 'The name of the algorithm',
+            type: 'string'
+        });
         const options = {
             file: {
                 describe: 'the algorithm file',
@@ -19,7 +23,6 @@ module.exports = {
                 describe: 'the algorithm env',
                 type: 'string',
                 choices: ['python', 'nodejs', 'java']
-
             },
             codePath: {
                 describe: 'the code path for the algorithm',
@@ -29,6 +32,11 @@ module.exports = {
                 describe: 'the code entry point for the algorithm',
                 type: 'string',
                 alias: ['entryPoint']
+            },
+            image: {
+                describe: 'set algorithm image',
+                type: 'string',
+                alias: ['algorithmImage']
             },
             cpu: {
                 describe: 'CPU requirements of the algorithm in cores',
@@ -52,28 +60,28 @@ module.exports = {
                 type: 'boolean',
                 default: false
             }
-        }
-        yargs.middleware(async (args, yargs) => {
-            if (args.file){
-                return;
+        };
+        yargs.middleware((args) => {
+            if (args.file || !args.codePath) {
+                return null;
             }
             const fillMissing = [
                 { name: 'env', type: 'list' },
                 { name: 'codeEntryPoint', type: 'input' },
-                { name: 'codePath', type: 'input', default: './', when: answers=>!answers.file }
+                { name: 'codePath', type: 'input', default: './', when: answers => !answers.file }
 
-            ]
-            return await askMissingValues(fillMissing, options, args);
-        })
-        yargs.options(options)
+            ];
+            return askMissingValues(fillMissing, options, args);
+        });
+        yargs.options(options);
 
-        yargs.completion()
+        yargs.completion();
         return yargs;
     },
     handler: async (argv) => {
         const ret = await handleApply(argv);
         if (ret.error) {
-            console.log(prettyjson.render(ret.error));
+            log(ret.error);
         }
     }
-}
+};

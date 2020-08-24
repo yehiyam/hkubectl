@@ -7,12 +7,15 @@
     "hkubectl": "./hkubectl"
   },
   "scripts": {
+    "lint": "./node_modules/eslint/bin/eslint.js .",
+    "pre-commit": "npm run lint",
     "test": "mocha test --colors --recursive",
-    "test-travis": "echo No tests specified",
+    "test-travis": "npm run lint",
     "build-linux": "./scripts/build.sh linux",
     "build-macos": "./scripts/build.sh macos",
     "build-win": "./scripts/build.sh win",
-    "build": "npm run build-linux && npm run build-macos && npm run build-win"
+    "build": "npm run build-linux && npm run build-macos && npm run build-win",
+    "gen-docs": "cli-md-docs --path ./hkubectl -o ./README.md --installTemplate \"$(cat ./scripts/installHelper.sh)\""
   },
   "repository": {
     "type": "git",
@@ -36,7 +39,9 @@
     "form-data": "^3.0.0",
     "fs-extra": "^9.0.1",
     "get-port": "^5.1.1",
+    "get-stdin": "^8.0.0",
     "inquirer": "^7.2.0",
+    "js-yaml": "^3.14.0",
     "lodash.merge": "^4.6.2",
     "md5": "^2.2.1",
     "object-path": "^0.11.4",
@@ -50,9 +55,18 @@
   },
   "devDependencies": {
     "chai": "^4.1.2",
+    "eslint": "^7.5.0",
+    "eslint-config-airbnb-base": "^14.2.0",
+    "eslint-plugin-import": "^2.22.0",
     "istanbul": "^0.4.5",
     "mocha": "^5.1.1",
-    "pkg": "4.3.8"
+    "pkg": "4.3.8",
+    "husky": "^4.2.5"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "npm run pre-commit"
+    }
   },
   "pkg": {
     "assets": [

@@ -1,5 +1,5 @@
 const { get } = require('../../../helpers/request-helper');
-const prettyjson = require('prettyjson');
+const { log } = require('../../../helpers/output');
 
 const list = async (argv) => {
     const path = 'store/algorithms';
@@ -7,7 +7,7 @@ const list = async (argv) => {
         ...argv,
         path
     });
-}
+};
 
 module.exports = {
     command: 'list',
@@ -18,6 +18,6 @@ module.exports = {
     builder: {},
     handler: async (argv) => {
         const ret = await list(argv);
-        console.log(prettyjson.render(ret, { inlineArrays: true }));
+        log(ret, { inlineArrays: true });
     }
-}
+};

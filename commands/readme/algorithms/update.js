@@ -1,16 +1,15 @@
-const prettyjson = require('prettyjson');
-const { put, get, putFile } = require('../../helpers/request-helper');
-const merge = require('lodash.merge');
-const fse = require("fs-extra");
+const fse = require('fs-extra');
+const { log } = require('../../../helpers/output');
+const { putFile } = require('../../../helpers/request-helper');
 
-const readmeUpdate = async (readmeFile, endpoint, rejectUnauthorized, name) => {
+const handleUpdate = async (readmeFile, endpoint, rejectUnauthorized, name) => {
     const path = `readme/algorithms/${name}`;
-    let stream = fse.createReadStream(readmeFile);
+    const stream = fse.createReadStream(readmeFile);
     const formData = {
-        "README.md": {
+        'README.md': {
             value: stream,
             options: {
-                filename: "README.md"
+                filename: 'README.md'
             }
         }
     };
@@ -20,22 +19,28 @@ const readmeUpdate = async (readmeFile, endpoint, rejectUnauthorized, name) => {
         formData,
         path
     });
+    return result;
 };
 
 module.exports = {
     command: 'update <name>',
-    description: 'update an algorithm',
+    description: 'Updates the Readme of the algorithm',
     options: {
 
     },
-    builder: {
-        readmeFile: {
+    builder: (yargs) => {
+        yargs.positional('name', {
+            demandOption: 'Please provide the algorithm name',
+            describe: 'The name of the algorithm',
+            type: 'string'
+        });
+        yargs.options('readmeFile', {
             describe: 'path for readme file. example: --readmeFile="./readme.md',
-            type: "string"
-        }
+            type: 'string'
+        });
     },
     handler: async (argv) => {
         const ret = await handleUpdate(argv);
-        console.log(prettyjson.render(ret));
+        log(ret);
     }
-}
+};

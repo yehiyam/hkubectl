@@ -1,14 +1,14 @@
-const { get } = require('../../helpers/request-helper');
-const prettyjson = require('prettyjson');
+const { get } = require('../../../helpers/request-helper');
+const { log } = require('../../../helpers/output');
 
 const getHandler = async ({ endpoint, rejectUnauthorized, name }) => {
-    const path = `store/algorithms/${name ? name : ""}`
+    const path = `store/algorithms/${name || ''}`;
     return get({
         endpoint,
         rejectUnauthorized,
         path
     });
-}
+};
 
 module.exports = {
     command: 'get [name]',
@@ -16,9 +16,15 @@ module.exports = {
     options: {
 
     },
-    builder: {},
+    builder: yargs => {
+        yargs.positional('name', {
+            demandOption: 'Please provide the algorithm name',
+            describe: 'The name of the algorithm',
+            type: 'string'
+        });
+    },
     handler: async (argv) => {
         const ret = await getHandler(argv);
-        console.log(prettyjson.render(ret));
+        log(ret);
     }
-}
+};

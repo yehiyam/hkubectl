@@ -1,13 +1,11 @@
 const yaml = require('js-yaml');
-const prettyjson = require('prettyjson');
 const fse = require('fs-extra');
+const { log } = require('../../helpers/output');
 const { post } = require('../../helpers/request-helper');
-const {waitForBuild} = require('../../helpers/results');
-const path = `exec/algorithm/`;
+const { waitForBuild } = require('../../helpers/results');
+const path = 'exec/algorithm/';
 
-
-
-const executeHandler = async ({ endpoint, rejectUnauthorized, name, file, noWait,noResult }) => {
+const executeHandler = async ({ endpoint, rejectUnauthorized, name, file, noWait, noResult }) => {
     let loadResult;
 
     if (file) {
@@ -15,7 +13,7 @@ const executeHandler = async ({ endpoint, rejectUnauthorized, name, file, noWait
     }
     const body = {
         name, ...loadResult
-    }
+    };
     const execResult = await post({
         endpoint,
         rejectUnauthorized,
@@ -28,9 +26,8 @@ const executeHandler = async ({ endpoint, rejectUnauthorized, name, file, noWait
     if (noWait) {
         return execResult.result;
     }
-    return waitForBuild({ endpoint, rejectUnauthorized, execResult: execResult.result,noResult })
-
-}
+    return waitForBuild({ endpoint, rejectUnauthorized, execResult: execResult.result, noResult });
+};
 
 module.exports = {
     command: 'algorithm [name]',
@@ -38,26 +35,34 @@ module.exports = {
     description: 'execute algorithm',
     options: {
     },
-    builder: {
-        'file': {
-            demandOption: false,
-            describe: 'file path/name for extra data',
-            type: 'string',
-            alias: ['f']
-        },
-        noWait: {
-            describe: 'if true, does not wait for the execution to finish',
-            type: 'boolean',
-            default: false,
-        },
-        noResult: {
-            describe: 'if true, does not show the result of the execution',
-            type: 'boolean',
-            default: false,
-        },
+    builder: yargs => {
+        yargs.positional('name', {
+            demandOption: 'Please provide the algorithm name',
+            describe: 'The name of the algorithm',
+            type: 'string'
+        });
+        const options = {
+            file: {
+                demandOption: false,
+                describe: 'file path/name for extra data',
+                type: 'string',
+                alias: ['f']
+            },
+            noWait: {
+                describe: 'if true, does not wait for the execution to finish',
+                type: 'boolean',
+                default: false,
+            },
+            noResult: {
+                describe: 'if true, does not show the result of the execution',
+                type: 'boolean',
+                default: false,
+            },
+        };
+        yargs.options(options);
     },
     handler: async (argv) => {
         const ret = await executeHandler(argv);
-        console.log(prettyjson.render(ret));
+        log(ret);
     }
-}
+};

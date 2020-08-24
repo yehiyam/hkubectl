@@ -2,13 +2,11 @@ const pathLib = require('path');
 const axios = require('axios').default;
 const https = require('https');
 const { URL } = require('url');
-const { getError } = require('./error-helper');
 const { promisify } = require('util');
+const { getError } = require('./error-helper');
 const sleep = promisify(setTimeout);
 
 const apiPrefix = 'api/v1/';
-const apiServerPrefix = '/hkube/api-server/';
-
 
 const uriBuilder = ({ endpoint, path, qs = {} }) => {
     const endpointUrl = new URL(endpoint);
@@ -22,11 +20,12 @@ const uriBuilder = ({ endpoint, path, qs = {} }) => {
         url.searchParams.append(k, v);
     });
     return url.toString();
-}
+};
 
 const _request = async ({ endpoint, rejectUnauthorized, path, method, body, formData, qs }) => {
     const url = uriBuilder({ endpoint, path, qs });
-    let result, error;
+    let result;
+    let error;
     try {
         result = await axios({
             method,
@@ -67,23 +66,22 @@ const getUntil = async (getOptions, condition, timeout = 20000) => {
         }
         await sleep(1000);
     }
-}
+};
 const post = async ({ endpoint, rejectUnauthorized, path, qs, body }) => {
     return _request({ endpoint, rejectUnauthorized, path, qs, body, method: 'POST' });
-}
+};
 
 const postFile = async ({ endpoint, rejectUnauthorized, path, qs, formData }) => {
     return _request({ endpoint, rejectUnauthorized, path, qs, formData, method: 'POST' });
-}
+};
 
 const put = async ({ endpoint, rejectUnauthorized, path, qs, body }) => {
     return _request({ endpoint, rejectUnauthorized, path, qs, body, method: 'PUT' });
-}
-
+};
 
 const putFile = async ({ endpoint, rejectUnauthorized, path, qs, formData }) => {
     return _request({ endpoint, rejectUnauthorized, path, qs, formData, method: 'PUT' });
-}
+};
 
 module.exports = {
     get,
@@ -93,4 +91,4 @@ module.exports = {
     putFile,
     del,
     getUntil
-}
+};

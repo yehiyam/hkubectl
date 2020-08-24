@@ -1,5 +1,5 @@
 const get = require('./get');
-const store = require('./store')
+const store = require('./store');
 
 module.exports = {
     get,

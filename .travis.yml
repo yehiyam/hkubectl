@@ -6,9 +6,6 @@ branches:
     - master
 install:
   - npm ci
-cache:
-  directories:
-    - node_modules
 script:
   - NODE_ENV=test npm run-script test-travis
 after_success:

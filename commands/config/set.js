@@ -1,12 +1,9 @@
-const path = require('path')
-const { URL } = require('url');
-const prettyjson = require('prettyjson');
-const fs = require('fs-extra');
+const { log } = require('../../helpers/output');
 const { writeValue } = require('../../helpers/config');
 
 const handler = async ({ key, value }) => {
-    return writeValue;
-}
+    return writeValue({ key, value });
+};
 
 module.exports = {
     command: 'set [key] [value]',
@@ -17,6 +14,6 @@ module.exports = {
     builder: {},
     handler: async (argv) => {
         const ret = await handler(argv);
-        console.log(prettyjson.render(ret));
+        log(ret);
     }
-}
+};

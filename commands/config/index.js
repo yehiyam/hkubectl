@@ -1,6 +1,6 @@
 const set = require('./set');
 const get = require('./get');
-module.exports={
+module.exports = {
     set,
     get
-}
+};

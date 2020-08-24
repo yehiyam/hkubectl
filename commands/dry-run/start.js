@@ -1,13 +1,11 @@
-const path = require('path');
-const prettyjson = require('prettyjson');
 const localPipeline = require('@hkube/local-pipeline-driver');
 const getHandler = async ({ port }) => {
-    localPipeline.run(port)
-}
+    localPipeline.run(port);
+};
 
 module.exports = {
     command: 'start',
-    description: 'srart dry run',
+    description: 'start dry run',
     options: {
     },
     builder: {
@@ -19,7 +17,6 @@ module.exports = {
         },
     },
     handler: async (argv) => {
-        const ret = await getHandler(argv);
-        //   console.log(prettyjson.render(ret));
+        await getHandler(argv);
     }
-}
+};

@@ -1,5 +1,5 @@
-const start = require('../dry-run/start');
+const start = require('./start');
 
 module.exports = {
     start
-}
+};

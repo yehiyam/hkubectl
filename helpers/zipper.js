@@ -1,3 +1,4 @@
+/* eslint-disable no-param-reassign */
 const archiver = require('archiver');
 const tempy = require('tempy');
 const fs = require('fs-extra');
@@ -17,14 +18,12 @@ const zipDirectory = (source, out, options) => {
         archive
             .directory(source, false)
             .on('error', err => reject(err))
-            .pipe(stream)
-            ;
-
+            .pipe(stream);
         stream.on('close', () => resolve(zipName));
         archive.finalize();
     });
-}
+};
 
 module.exports = {
     zipDirectory
-}
+};

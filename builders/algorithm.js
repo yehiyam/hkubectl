@@ -5,11 +5,11 @@ const algorithms = {
     description: 'Manage loaded algorithms',
     builder: (yargs) => {
         Object.values(commands).forEach((cmd) => {
-            yargs.command(cmd)
+            yargs.command(cmd);
         });
         return yargs;
     },
     handler: () => { }
-}
+};
 
 module.exports = algorithms;

@@ -1,4 +1,4 @@
-const prettyjson = require('prettyjson');
+const { log } = require('../../helpers/output');
 const { get } = require('../../helpers/request-helper');
 
 const executeHandler = async ({ endpoint, rejectUnauthorized, jobId }) => {
@@ -8,22 +8,22 @@ const executeHandler = async ({ endpoint, rejectUnauthorized, jobId }) => {
         rejectUnauthorized,
         path
     });
-}
+};
 
 module.exports = {
     command: 'result <jobId>',
-    alias: ['e'],
     description: 'returns result for the execution of a specific pipeline run',
     options: {
     },
-    builder: {
-        jobId: {
-            demandOption: true,
+    builder: (yargs) => {
+        yargs.positional('jobId', {
+            demandOption: 'Please provide the job Id',
+            describe: 'The jobId to get the result',
             type: 'string'
-        }
+        });
     },
     handler: async (argv) => {
         const ret = await executeHandler(argv);
-        console.log(prettyjson.render(ret));
+        log(ret);
     }
-}
+};

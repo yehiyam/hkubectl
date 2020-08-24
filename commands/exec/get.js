@@ -1,24 +1,29 @@
 const { get } = require('../../helpers/request-helper');
-const path = require('path');
-const prettyjson = require('prettyjson');
+const { log } = require('../../helpers/output');
 
-const getHandler = async ({ endpoint, rejectUnauthorized, name }) => {
-    const path = `store/pipelines/${name ? name : ""}`
+const getHandler = ({ endpoint, rejectUnauthorized, jobId }) => {
+    const path = `exec/pipelines/${jobId}`;
     return get({
         endpoint,
         rejectUnauthorized,
         path
     });
-}
+};
 
 module.exports = {
-    command: 'get [name]',
-    description: 'Gets an pipeline by name',
+    command: 'get <jobId>',
+    description: 'Returns the executed pipeline data',
     options: {
     },
-    builder: {},
+    builder: (yargs) => {
+        yargs.positional('jobId', {
+            demandOption: 'Please provide the job Id',
+            describe: 'The jobId to get the result',
+            type: 'string'
+        });
+    },
     handler: async (argv) => {
         const ret = await getHandler(argv);
-        console.log(prettyjson.render(ret));
+        log(ret);
     }
-}
+};

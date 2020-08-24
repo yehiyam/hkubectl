@@ -10,9 +10,9 @@ const getError = (error) => {
     if (error.error) {
         return getError(error.error);
     }
-    return { message: "Generic Error" };
-}
+    return { message: 'Generic Error' };
+};
 
 module.exports = {
     getError
-}
+};

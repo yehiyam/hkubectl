@@ -1,21 +1,21 @@
 module.exports = {
-    directions:{
+    directions: {
         sendonly: 'sendonly',
         receiveonly: 'receiveonly',
         sendreceive: 'sendreceive'
     },
-    events:{
+    events: {
         FolderSummary: 'FolderSummary',
         FolderCompletion: 'FolderCompletion'
     },
-    buildDoneEvents:{
-        completed:'completed',
-        failed:'failed',
-        stopped:'stopped'
+    buildDoneEvents: {
+        completed: 'completed',
+        failed: 'failed',
+        stopped: 'stopped'
     },
-    jobExecEvents:{
-        completed:'completed',
-        failed:'failed',
-        stopped:'stopped'
+    jobExecEvents: {
+        completed: 'completed',
+        failed: 'failed',
+        stopped: 'stopped'
     }
-}
+};

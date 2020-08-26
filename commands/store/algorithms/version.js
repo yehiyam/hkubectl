@@ -57,6 +57,6 @@ module.exports = {
     },
     handler: async (argv) => {
         const ret = await getHandler(argv);
-        log(ret);
+        log(ret, argv);
     }
 };

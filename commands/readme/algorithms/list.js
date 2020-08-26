@@ -18,6 +18,6 @@ module.exports = {
     builder: {},
     handler: async (argv) => {
         const ret = await list(argv);
-        log(ret, { inlineArrays: true });
+        log(ret, { ...argv, printOptions: { inlineArrays: true } });
     }
 };

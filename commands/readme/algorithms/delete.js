@@ -22,6 +22,6 @@ module.exports = {
     },
     handler: async (argv) => {
         const ret = await delHandler(argv);
-        log(ret);
+        log(ret, argv);
     }
 };

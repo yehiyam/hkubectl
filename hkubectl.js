@@ -48,8 +48,7 @@ const main = async () => {
         .showHelpOnFail()
         .help()
         .epilog(chalk.bold('for more information visit http://hkube.io'))
-        .completion()
-        .argv;
+        .completion();
 
     const args = yargs.argv;
 

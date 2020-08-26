@@ -1,5 +1,4 @@
 const prettyjson = require('prettyjson');
-const yargs = require('yargs');
 
 const tryJson = (data) => {
     try {
@@ -9,13 +8,12 @@ const tryJson = (data) => {
         return data;
     }
 };
-const log = (data, options) => {
-    const { json } = yargs.argv;
+const log = (data, { json, printOptions } = {}) => {
     if (json) {
         console.log(tryJson(data));
     }
     else {
-        console.log(prettyjson.render(data, options));
+        console.log(prettyjson.render(data, printOptions));
     }
 };
 module.exports = {

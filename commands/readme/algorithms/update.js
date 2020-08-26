@@ -41,6 +41,6 @@ module.exports = {
     },
     handler: async (argv) => {
         const ret = await handleUpdate(argv);
-        log(ret);
+        log(ret, argv);
     }
 };

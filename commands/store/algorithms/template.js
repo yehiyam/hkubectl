@@ -1,24 +1,19 @@
-/* eslint-disable import/no-dynamic-require */
-/* eslint-disable global-require */
 const chalk = require('chalk');
 const fs = require('fs-extra');
 const path = require('path');
 const replaceExt = require('replace-ext');
 const { log } = require('../../../helpers/output');
-
+const templates = require('../../../templates');
 const extensions = {
     python: '.py',
     nodejs: '.js',
 };
-const templatesPath = path.join(__dirname, '../../../templates');
 const _generateDefinitionFile = ({ env, ...rest }) => {
-    const envTemplateFolder = path.join(templatesPath, env);
-    const { definition } = require(path.join(envTemplateFolder, 'definition'));
+    const { definition } = templates[env];
     return definition({ env, ...rest });
 };
 const _generateSampleAlgorithm = ({ env, ...rest }) => {
-    const envTemplateFolder = path.join(templatesPath, env);
-    const { algorithm } = require(path.join(envTemplateFolder, 'algorithm'));
+    const { algorithm } = templates[env];
     return algorithm({ env, ...rest });
 };
 const template = async ({ name, codePath, codeEntryPoint, overwrite, env, ...rest }) => {

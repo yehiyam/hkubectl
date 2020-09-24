@@ -23,6 +23,4 @@ const definition = ({ name, env, cpu, gpu, mem, entryFile }) => {
     return yaml;
 };
 
-module.exports = {
-    definition
-};
+module.exports = definition;

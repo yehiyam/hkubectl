@@ -1,10 +1,10 @@
 const algorithm = (args) => `
-const start = (args, hkubeApi) => {
+const start = async (args, hkubeApi) => {
   // example ${args.name} algorithm
   // input is an array of algorithm input
   const { input } = args;
-  console.log(\`input:\n\${JSON.stringify(input, null, 2)}\`);
-  return 10;
+  console.log(\`input: \${JSON.stringify(input)}\`);
+  return 'Hello from Node.js algorithm ${args.name}!';
 }
 
 module.exports = {
@@ -12,6 +12,4 @@ module.exports = {
 }
 `;
 
-module.exports = {
-    algorithm
-};
+module.exports = algorithm;

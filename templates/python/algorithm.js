@@ -1,15 +1,10 @@
 const algorithm = (args) => `
-from typing import Dict
-from hkube_python_wrapper import HKubeApi
-
-def start(args: Dict, hkubeApi: HKubeApi):
+def start(args, hkubeApi):
   # example ${args.name} algorithm
   # input is an array of algorithm input
   input=args.get('input')
-  print(input)
-  return 10
+  print('input: {input}'.format(input=input))
+  return 'Hello from Python algorithm ${args.name}!'
 `;
 
-module.exports = {
-    algorithm
-};
+module.exports = algorithm;

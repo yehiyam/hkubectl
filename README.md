@@ -195,6 +195,25 @@ Options:
 |name|The name of the algorithm|string|true||  
 |--setCurrent, --set|Sets the current version|string|||  
 |--force|If true forces the change of the version (might stop running pipelines)|boolean|||  
+#### template  
+  
+```shell  
+$ hkubectl algorithm template [ name ]  
+```  
+Create algorithm template for builds    
+Options:    
+
+  
+|option|description|type|required|default|  
+|---|---|---|---|---|  
+|name|The name of the algorithm|string|||  
+|--codePath|the code path for the algorithm  [required]|string|true||  
+|--codeEntryPoint, --entryPoint|the code entry point for the algorithm  |string||main|  
+|--env|the algorithm env  [required] [choices: "python", "nodejs"]|string|true||  
+|--overwrite|overwrite an existing folder|boolean|||  
+|--cpu|CPU requirements of the algorithm in cores  |number||0.1|  
+|--gpu|GPU requirements of the algorithm in cores  |number||0|  
+|--mem|memory requirements of the algorithm. Possible units are ['Ki', 'M', 'Mi', 'Gi', 'm', 'K', 'G', 'T', 'Ti', 'P', 'Pi', 'E', 'Ei']. Minimum is 4Mi|string||512Mi|  
 ### pipeline  
 ---  
 ```shell  

@@ -3,17 +3,16 @@ const axios = require('axios').default;
 const https = require('https');
 const { URL } = require('url');
 const { promisify } = require('util');
+const yargs = require('yargs');
 const { getError } = require('./error-helper');
 const sleep = promisify(setTimeout);
 
 const apiPrefix = 'api/v1/';
 
 const uriBuilder = ({ endpoint, path, qs = {} }) => {
-    const endpointUrl = new URL(endpoint);
     let prefix = apiPrefix;
-    if (endpointUrl.hostname !== 'localhost' && endpointUrl.hostname !== '127.0.0.1') {
-        prefix = pathLib.join('/hkube/api-server/', prefix);
-    }
+    const { pathPrefix } = yargs.argv;
+    prefix = pathLib.join(pathPrefix, prefix);
     const fullPath = pathLib.join(prefix, path);
     const url = new URL(fullPath, endpoint);
     Object.entries(qs).forEach(([k, v]) => {

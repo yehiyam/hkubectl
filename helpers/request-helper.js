@@ -21,7 +21,7 @@ const uriBuilder = ({ endpoint, path, qs = {} }) => {
     return url.toString();
 };
 
-const _request = async ({ endpoint, rejectUnauthorized, path, method, body, formData, qs }) => {
+const _request = async ({ endpoint, rejectUnauthorized, path, method, body, formData, qs, timeout }) => {
     const url = uriBuilder({ endpoint, path, qs });
     let result;
     let error;
@@ -32,7 +32,8 @@ const _request = async ({ endpoint, rejectUnauthorized, path, method, body, form
             httpsAgent: https.Agent({ rejectUnauthorized }),
             json: true,
             data: body || formData,
-            headers: formData ? formData.getHeaders() : {}
+            headers: formData ? formData.getHeaders() : {},
+            timeout
         });
     }
     catch (e) {
@@ -45,8 +46,8 @@ const del = async ({ endpoint, rejectUnauthorized, path, qs }) => {
     return _request({ endpoint, rejectUnauthorized, path, qs, method: 'DELETE' });
 };
 
-const get = async ({ endpoint, rejectUnauthorized, path, qs }) => {
-    return _request({ endpoint, rejectUnauthorized, path, qs, method: 'GET' });
+const get = async ({ endpoint, rejectUnauthorized, path, qs, timeout }) => {
+    return _request({ endpoint, rejectUnauthorized, path, qs, method: 'GET', timeout });
 };
 
 const getUntil = async (getOptions, condition, timeout = 20000) => {

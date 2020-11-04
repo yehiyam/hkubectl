@@ -1,7 +1,9 @@
 const inquirer = require('inquirer');
 const chalk = require('chalk');
+const ora = require('ora');
 const commands = require('../commands/config/index.js');
 const { writeValues, resolveConfigPath } = require('../helpers/config');
+const { get } = require('../helpers/request-helper');
 const urlRegex = /^(?:http(s)?:\/\/)?[\w.-]+(?:\.[\w.-]+)+[\w\-._~:/?#[\]@!$&'()*+,;=.]+$/;
 
 const handler = async ({ endpoint, rejectUnauthorized, ...rest }) => {
@@ -24,7 +26,21 @@ const handler = async ({ endpoint, rejectUnauthorized, ...rest }) => {
         }
     ]);
     await writeValues(answers);
+    // const answers = { endpoint, rejectUnauthorized };
     console.log(`Values saved in ${await resolveConfigPath()}`);
+    const spinner = ora({ text: 'Validating config...', spinner: 'line' }).start();
+    const res = await get({ ...answers, path: '/storage/info', timeout: 1000 });
+    if (!res || !res.result) {
+        spinner.fail();
+        console.error(chalk`{red failed} to connect to api-server at ${endpoint}`);
+        if (res.error && res.error.message) {
+            console.error(chalk`{red Error is}: ${res.error.message}`);
+        }
+    }
+    else {
+        spinner.succeed();
+        console.log(chalk`{green Successfully} configured to {bold ${endpoint} }`);
+    }
     console.log(chalk`Run {bold ${rest.$0} config} to run the configuration wizard again`);
     console.log(chalk`Run {bold ${rest.$0}} without arguments to get help`);
 };

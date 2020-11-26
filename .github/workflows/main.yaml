@@ -27,16 +27,10 @@ jobs:
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action"
       - run: NODE_ENV=test npm run-script test-travis
-      - run: npm version patch -m "$(git log -1 --pretty=%B) .... bump version"
-      - run: npm run build
       - run: |
-          set +e
-          git diff --exit-code --quiet
-          if [ "$?" == 1 ]; then
-            set -e
-            git commit -a -m "update version"
-            git push --follow-tags
-          fi
+          npm version patch -m "$(git log -1 --pretty=%B) .... bump version"
+          export TAG=$(git describe --abbrev=0)
+      - run: git push --follow-tags
       - run: npm run build
       - name: Create Release
         id: create_release
@@ -44,8 +38,8 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          tag_name: ${{ github.ref }}
-          release_name: Release ${{ github.ref }}
+          tag_name: ${{ TAG }}
+          release_name: Release ${{ TAG }}
           draft: false
           prerelease: false
       - name: Upload Release Asset

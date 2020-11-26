@@ -23,12 +23,13 @@ jobs:
         with:
           node-version: 10.x
       - run: npm ci
+      - run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
       - run: NODE_ENV=test npm run-script test-travis
       - run: npm version patch -m "$(git log -1 --pretty=%B) .... bump version"
       - run: npm run build
       - run: |
-          git config --local user.email "action@github.com"
-          git config --local user.name "GitHub Action"
           set +e
           git diff --exit-code --quiet
           if [ "$?" == 1 ]; then

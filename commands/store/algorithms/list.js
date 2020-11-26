@@ -3,10 +3,14 @@ const { log } = require('../../../helpers/output');
 
 const list = async (argv) => {
     const path = 'store/algorithms';
-    return get({
+    const algorithms = await get({
         ...argv,
         path
     });
+    if (!algorithms || !algorithms.result) {
+        return algorithms;
+    }
+    return algorithms.result.map(a => a.name);
 };
 
 module.exports = {
@@ -18,6 +22,6 @@ module.exports = {
     builder: {},
     handler: async (argv) => {
         const ret = await list(argv);
-        log(ret, { ...argv, printOptions: { inlineArrays: true } });
+        log(ret, { ...argv });
     }
 };

@@ -22,6 +22,6 @@ module.exports = {
     },
     handler: async (argv) => {
         const ret = await getHandler(argv);
-        log(ret, argv);
+        log(ret.result || ret, argv);
     }
 };

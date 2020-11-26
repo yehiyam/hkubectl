@@ -47,7 +47,7 @@ module.exports = {
                 type: 'number',
             },
             mem: {
-                describe: "memory requirements of the algorithm. Possible units are ['Ki', 'M', 'Mi', 'Gi', 'm', 'K', 'G', 'T', 'Ti', 'P', 'Pi', 'E', 'Ei']. Minimum is 4Mi",
+                describe: "memory requirements of the algorithm. Possible units are ['Mi', 'Gi']. Minimum is 4Mi",
                 type: 'string',
             },
             noWait: {

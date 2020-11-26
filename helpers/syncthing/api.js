@@ -1,5 +1,4 @@
 const axios = require('axios');
-const yargs = require('yargs');
 const https = require('https');
 const axiosRetry = require('axios-retry');
 const { promisify } = require('util');
@@ -89,7 +88,7 @@ class SyncthingApi extends EventEmitter {
     async removeFolderForDevice({ ownerID }) {
         const unlock = await lock('removeFolderForDevice');
         try {
-            if (yargs.argv.verbose) {
+            if (global.args.verbose) {
                 console.log(`removing folders for device ${ownerID}`);
             }
             const currentConfig = await this.getConfig();

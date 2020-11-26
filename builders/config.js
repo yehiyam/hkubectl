@@ -32,14 +32,14 @@ const handler = async ({ endpoint, rejectUnauthorized, ...rest }) => {
     const res = await get({ ...answers, path: '/storage/info', timeout: 1000 });
     if (!res || !res.result) {
         spinner.fail();
-        console.error(chalk`{red failed} to connect to api-server at ${endpoint}`);
+        console.error(chalk`{red failed} to connect to api-server at ${answers.endpoint}`);
         if (res.error && res.error.message) {
             console.error(chalk`{red Error is}: ${res.error.message}`);
         }
     }
     else {
         spinner.succeed();
-        console.log(chalk`{green Successfully} configured to {bold ${endpoint} }`);
+        console.log(chalk`{green Successfully} configured to {bold ${answers.endpoint} }`);
     }
     console.log(chalk`Run {bold ${rest.$0} config} to run the configuration wizard again`);
     console.log(chalk`Run {bold ${rest.$0}} without arguments to get help`);

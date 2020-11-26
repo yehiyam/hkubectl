@@ -9,6 +9,7 @@ const dryRun = require('./builders/dry-run');
 const sync = require('./builders/sync');
 const syncthing = require('./helpers/syncthing/syncthing.js');
 
+global.args = {};
 const handleSignals = () => {
     process.on('SIGINT', async () => {
         await syncthing.remove();
@@ -54,9 +55,10 @@ const main = async () => {
         .help()
         .epilog(chalk.bold('for more information visit http://hkube.io'))
         .completion();
-
+    yargs.middleware((args) => {
+        global.args = args;
+    });
     const args = yargs.argv;
-
     if (!args._[0]) {
         if (args.endpoint) {
             yargs.showHelp();

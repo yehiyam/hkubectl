@@ -24,7 +24,7 @@ jobs:
           node-version: 10.x
       - run: npm ci
       - run: NODE_ENV=test npm run-script test-travis
-      - run: npm version patch -m "$(git log -1 --pretty=%B) .... bump version
+      - run: npm version patch -m "$(git log -1 --pretty=%B) .... bump version"
       - run: npm run build
       - run: |
           git config --local user.email "action@github.com"

@@ -21,7 +21,8 @@ jobs:
       - uses: actions/setup-node@v1
         with:
           node-version: 14.x
-      - run: helm lint hkube/
+      # disable lint for now because of https://github.com/helm/helm/issues/8615
+      # - run: helm lint hkube/
       - run: |
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action"
